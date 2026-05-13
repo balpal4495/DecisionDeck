@@ -1,7 +1,7 @@
 {
   "id": "d99d4df1-41e8-43e1-8732-42978915e6d6",
   "schema_version": 2,
-  "timestamp": "2026-05-13T00:00:00.000Z",
+  "timestamp": "2026-05-13T19:27:21.454Z",
   "topic": "sentinel/standing-gap-map",
   "decision": "Sentinel is a standing codebase-wide Chronicle coverage map; all modules always appear; risk is derived from coverage % only, never from what changed in the current PR.",
   "key_insight": "Sentinel is a standing codebase-wide Chronicle coverage map; all modules always appear; risk is derived from coverage % only, never from what changed in the current PR.",

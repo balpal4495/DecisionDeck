@@ -13,6 +13,7 @@ const envSchema = z.object({
   JIRA_TOKEN: z.string().optional(),
   JIRA_EMAIL: z.string().optional(),
   JIRA_PROJECTS: z.string().optional(), // comma-separated: "PROJ,TEAM"
+  JIRA_INSECURE_TLS: z.string().optional(), // set to "true" for corporate CAs
 
   // Confluence Integration (Phase 3)
   CONFLUENCE_HOST: z.string().optional(),
