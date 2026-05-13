@@ -1,7 +1,7 @@
 {
   "id": "d306916f-bbe1-4304-bdbf-c4265f274961",
   "schema_version": 2,
-  "timestamp": "2026-05-13T00:00:00.000Z",
+  "timestamp": "2026-05-13T19:27:21.449Z",
   "topic": "sentinel/coverage-scanner-extensions",
   "decision": "Sentinel coverage scanner scans .ts, .tsx, and .yml files; .tsx covers Next.js pages and components, .yml covers GitHub workflow files.",
   "key_insight": "Sentinel coverage scanner scans .ts, .tsx, and .yml files; .tsx covers Next.js pages and components, .yml covers GitHub workflow files.",

@@ -1,0 +1,33 @@
+{
+  "schema_version": 2,
+  "topic": "integrations/jira-sync",
+  "decision": "Jira epics and tickets are synced read-only via POST /rest/api/3/search/jql into the WorkItems table using idempotent upsert.",
+  "key_insight": "Jira epics and tickets are synced read-only via POST /rest/api/3/search/jql into the WorkItems table using idempotent upsert.",
+  "affected_areas": [
+    "scripts/sync-jira.ts",
+    "lib/jira/mappers.ts",
+    "tests/sync/jira.mappers.test.ts",
+    "lib/env.ts",
+    "package.json"
+  ],
+  "status": "open",
+  "confidence": 0.95,
+  "source_module": "IntegrationEngineer",
+  "evidence_cited": [],
+  "alternatives_considered": [
+    "Use gh CLI for Jira like GitHub integration",
+    "Use deprecated GET /rest/api/3/search endpoint"
+  ],
+  "rejected_reason": [
+    "No gh CLI equivalent for Jira; direct HTTPS is cleaner with no external CLI dependency",
+    "GET /rest/api/3/search was removed by Atlassian per changelog CHANGE-2046"
+  ],
+  "scope": [
+    "integrations",
+    "jira",
+    "work-items",
+    "phase-2"
+  ],
+  "id": "8bbabcec-7139-4bfa-961c-8011f407ff7d",
+  "timestamp": "2026-05-13T19:27:21.439Z"
+}
