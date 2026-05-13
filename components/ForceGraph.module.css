@@ -225,3 +225,311 @@
   border-color: var(--color-accent);
   text-decoration: none;
 }
+
+/* ── Tabs ───────────────────────────────────────────────────────────────── */
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: 3px;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-4);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+}
+
+.tab:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
+.tabActive {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
+.tabBadge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background: rgba(251, 146, 60, 0.2);
+  color: #fb923c;
+  border-radius: 10px;
+  padding: 1px 6px;
+  line-height: 1.4;
+}
+
+.chipGrey {
+  background: rgba(107,114,128,0.12);
+  border-color: rgba(107,114,128,0.3);
+  color: #9ca3af;
+}
+
+/* ── PR Coverage wrapper ────────────────────────────────────────────────── */
+
+.coverageWrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Signal filter chips ────────────────────────────────────────────────── */
+
+.coverageFilters {
+  flex-shrink: 0;
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+  flex-wrap: wrap;
+  background: var(--color-surface);
+}
+
+.sigFilter {
+  padding: 3px var(--space-3);
+  font-size: 0.8125rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sigFilter:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
+.sigFilterActive {
+  background: var(--color-surface-raised);
+}
+
+.sigCount {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background: var(--color-bg);
+  border-radius: 10px;
+  padding: 0 5px;
+  color: inherit;
+  line-height: 1.5;
+}
+
+/* ── Coverage table ─────────────────────────────────────────────────────── */
+
+.coverageScroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.covTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.covTable thead tr {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-surface);
+}
+
+.covTable th {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.covThPr     { width: 220px; }
+.covThKey    { width: 90px; }
+.covThTicket { width: 240px; }
+.covThSprint { width: 90px; }
+.covThAge    { width: 50px; }
+.covThGH     { width: 160px; }
+.covThSignal { width: 110px; }
+
+.covRow {
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.covRow:hover {
+  background: var(--color-surface);
+}
+
+.covRowOpen {
+  background: var(--color-surface);
+}
+
+.covTable td {
+  padding: var(--space-2) var(--space-3);
+  vertical-align: middle;
+}
+
+/* PR cell */
+.covCellPr { }
+
+.prIdLine {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: 2px;
+}
+
+.prStatusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.prNum {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.prTitleShort {
+  font-size: 0.8125rem;
+  color: var(--color-text);
+  line-height: 1.35;
+}
+
+/* Key cell */
+.covCellKey { }
+
+.keyBadge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  background: rgba(109,123,255,0.1);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.noKey {
+  color: #374151;
+  font-size: 0.75rem;
+}
+
+/* Ticket cell */
+.covCellTicket { }
+
+.ticketTitle {
+  color: var(--color-text);
+  font-size: 0.8125rem;
+}
+
+/* Sprint cell */
+.covCellSprint { }
+
+.sprintBadge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: rgba(59,130,246,0.12);
+  color: #93c5fd;
+  border: 1px solid rgba(59,130,246,0.2);
+  white-space: nowrap;
+}
+
+.sprintActive {
+  background: rgba(34,197,94,0.12);
+  color: #86efac;
+  border-color: rgba(34,197,94,0.2);
+}
+
+/* Age / GH / Signal cells */
+.covCellAge    { text-align: right; font-family: var(--font-mono); font-size: 0.75rem; }
+.covCellGH     { }
+.covCellSignal { }
+
+.ghCell {
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.ghNone {
+  color: #374151;
+  font-size: 0.75rem;
+}
+
+.ghCount { color: var(--color-text-muted); }
+.ghAge   { color: var(--color-text-muted); }
+
+/* Signal badge */
+.signalBadge {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+/* ── Expanded detail row ────────────────────────────────────────────────── */
+
+.covExpandRow {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.covExpand {
+  padding: var(--space-3) var(--space-6);
+  display: flex;
+  gap: var(--space-6);
+  align-items: flex-start;
+}
+
+.covExpandGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px var(--space-4);
+  align-items: baseline;
+  flex: 1;
+  font-size: 0.8125rem;
+}
+
+.covExpandLabel {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.covExpandLinks {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}

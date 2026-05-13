@@ -1,7 +1,7 @@
 import { db } from "@/db"
 import { workItems } from "@/db/schema"
 import { buildPulse } from "@/lib/pulse"
-import { buildGraphData } from "@/lib/graph"
+import { buildGraphData, buildPRCoverage } from "@/lib/graph"
 import { ForceGraph } from "@/components/ForceGraph"
 
 export const metadata = {
@@ -11,10 +11,11 @@ export const metadata = {
 export default async function GraphPage() {
   const items = await db.select().from(workItems)
   const pulse = buildPulse(items)
-  const graphData = buildGraphData(pulse)
+  const graphData    = buildGraphData(pulse)
+  const prCoverage   = buildPRCoverage(items, pulse)
 
-  // Serialise to a plain object so it crosses the RSC → client boundary cleanly
-  const data = JSON.parse(JSON.stringify(graphData))
+  const data       = JSON.parse(JSON.stringify(graphData))
+  const coverage   = JSON.parse(JSON.stringify(prCoverage))
 
-  return <ForceGraph data={data} />
+  return <ForceGraph data={data} prCoverage={coverage} />
 }
