@@ -50,7 +50,7 @@ export default function RootLayout({
               </li>
               <li className={styles.navItem}>
                 <NavLink href="/graph" className={styles.navLink} activeClassName={styles.navLinkActive}>
-                  Graph
+                  Alignment
                 </NavLink>
               </li>
               <div className={styles.navDivider} />

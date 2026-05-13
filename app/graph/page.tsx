@@ -5,7 +5,7 @@ import { buildGraphData } from "@/lib/graph"
 import { ForceGraph } from "@/components/ForceGraph"
 
 export const metadata = {
-  title: "Graph · DecisionDeck",
+  title: "Alignment · DecisionDeck",
 }
 
 export default async function GraphPage() {

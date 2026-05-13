@@ -1,9 +1,9 @@
-/* ── Outer wrapper — fixed overlay right of the nav ─────────────────────── */
+/* ── Outer wrapper — fixed, fills content area right of nav ─────────────── */
 
 .wrapper {
   position: fixed;
   top: 0;
-  left: 220px;     /* matches nav width in layout.module.css */
+  left: 220px;
   right: 0;
   bottom: 0;
   z-index: 50;
@@ -13,7 +13,7 @@
   overflow: hidden;
 }
 
-/* ── Filter bar ─────────────────────────────────────────────────────────── */
+/* ── Header bar ─────────────────────────────────────────────────────────── */
 
 .bar {
   flex-shrink: 0;
@@ -44,108 +44,65 @@
   color: var(--color-text-muted);
 }
 
-.filters {
+.summaryChips {
   display: flex;
   gap: var(--space-2);
-  flex-wrap: wrap;
 }
 
-.filterBtn {
-  padding: var(--space-1) var(--space-3);
-  font-size: 0.8125rem;
+.chip {
+  padding: 2px var(--space-3);
+  font-size: 0.75rem;
+  font-weight: 600;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
-  background: transparent;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-  font-family: inherit;
+  border: 1px solid transparent;
 }
 
-.filterBtn:hover {
-  background: var(--color-surface-raised);
-  color: var(--color-text);
-}
+.chipGreen  { background: rgba(34, 197, 94, 0.12);  border-color: rgba(34, 197, 94, 0.3);  color: #86efac; }
+.chipRed    { background: rgba(239, 68, 68, 0.12);  border-color: rgba(239, 68, 68, 0.3);  color: #fca5a5; }
+.chipOrange { background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.3); color: #fcd34d; }
 
-.filterBtnActive {
-  background: var(--color-surface-raised);
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-}
-
-/* ── WebGL canvas area ──────────────────────────────────────────────────── */
+/* ── Scrollable SVG canvas ──────────────────────────────────────────────── */
 
 .canvas {
   flex: 1;
-  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
-  overflow: hidden;
 }
 
-/* ── Loading state ──────────────────────────────────────────────────────── */
-
-.loading {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  color: var(--color-text-muted);
-  font-size: 0.875rem;
-}
-
-.loadingDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  animation: pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.3; transform: scale(0.8); }
-  50%       { opacity: 1;   transform: scale(1.2); }
-}
-
-/* ── Legend ─────────────────────────────────────────────────────────────── */
+/* ── Legend footer ──────────────────────────────────────────────────────── */
 
 .legend {
-  position: absolute;
-  bottom: var(--space-4);
-  left: var(--space-4);
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  padding: var(--space-2) var(--space-4);
-  background: rgba(26, 29, 39, 0.85);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  font-size: 0.75rem;
+  padding: var(--space-2) var(--space-6);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  font-size: 0.72rem;
   color: var(--color-text-muted);
   flex-wrap: wrap;
-  pointer-events: none;
+}
+
+.legendLabel {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #4b5563;
+  font-weight: 600;
 }
 
 .legendItem {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .legendDot {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.legendLine {
-  width: 20px;
-  height: 2px;
-  background: #22c55e;
-  border-radius: 1px;
   flex-shrink: 0;
 }
 
@@ -155,14 +112,14 @@
   background: var(--color-border);
 }
 
-/* ── Detail panel ───────────────────────────────────────────────────────── */
+/* ── Detail panel (position: fixed so it doesn't scroll) ───────────────── */
 
 .detail {
-  position: absolute;
-  top: var(--space-4);
+  position: fixed;
+  top: 56px;   /* just below the bar */
   right: var(--space-4);
   width: 300px;
-  background: rgba(26, 29, 39, 0.94);
+  background: rgba(26, 29, 39, 0.96);
   backdrop-filter: blur(12px);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -173,11 +130,12 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   animation: slideIn 0.15s ease-out;
   overflow-y: auto;
-  max-height: calc(100% - var(--space-8));
+  max-height: calc(100vh - 80px);
+  z-index: 100;
 }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(12px); }
+  from { opacity: 0; transform: translateX(10px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
@@ -196,15 +154,8 @@
   border-radius: var(--radius-sm);
 }
 
-.typeBadgeJira {
-  background: rgba(59, 130, 246, 0.18);
-  color: #93c5fd;
-}
-
-.typeBadgePr {
-  background: rgba(168, 85, 247, 0.18);
-  color: #d8b4fe;
-}
+.typeBadgeJira { background: rgba(59, 130, 246, 0.18); color: #93c5fd; }
+.typeBadgePr   { background: rgba(168, 85, 247, 0.18); color: #d8b4fe; }
 
 .closeBtn {
   background: none;
@@ -219,9 +170,7 @@
   line-height: 1;
 }
 
-.closeBtn:hover {
-  color: var(--color-text);
-}
+.closeBtn:hover { color: var(--color-text); }
 
 .detailKey {
   font-size: 0.8125rem;
@@ -235,8 +184,6 @@
   color: var(--color-text);
   line-height: 1.45;
 }
-
-/* ── Meta key/value table ───────────────────────────────────────────────── */
 
 .meta {
   display: grid;
@@ -257,8 +204,6 @@
   font-size: 0.8125rem;
   color: var(--color-text);
 }
-
-/* ── External link ──────────────────────────────────────────────────────── */
 
 .openLink {
   display: inline-flex;
