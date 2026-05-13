@@ -9,6 +9,7 @@
     "start": "next start",
     "db:generate": "drizzle-kit generate --out db/migrations --schema db/schema.ts --dialect sqlite",
     "db:migrate": "drizzle-kit migrate",
+    "db:reset": "rm -f local.db local.db-wal local.db-shm && drizzle-kit migrate",
     "db:seed": "tsx db/seed.ts",
     "sync:github": "tsx scripts/sync-github.ts",
     "chronicle:commit": "tsx scripts/chronicle-commit-all.ts",

@@ -38,7 +38,9 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Generate knowledge map
-        run: npx tsx scripts/sentinel-pr.ts "${{ steps.changed.outputs.files }}"
+        env:
+          CHANGED_FILES: ${{ steps.changed.outputs.files }}
+        run: npx tsx scripts/sentinel-pr.ts
 
       - name: Find existing Sentinel comment
         id: find-comment

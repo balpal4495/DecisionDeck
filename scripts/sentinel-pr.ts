@@ -19,8 +19,9 @@ import path from "path"
 const CHRONICLE_DIR = ".chronicle"
 
 async function main() {
-  // Changed files are passed as a single newline-separated string from GH Actions
-  const rawArg = process.argv[2] ?? ""
+  // Changed files — prefer CHANGED_FILES env var (safe for multiline in GH Actions)
+  // Fall back to argv[2] for local use: npm run sentinel:pr "file1.ts\nfile2.ts"
+  const rawArg = process.env.CHANGED_FILES ?? process.argv[2] ?? ""
   const changedFiles = rawArg
     .split("\n")
     .map((f) => f.trim())

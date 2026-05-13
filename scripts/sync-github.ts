@@ -22,6 +22,7 @@ import * as schema from "../db/schema"
 import { workItems } from "../db/schema"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
+import { inferArea, inferRiskLevel, mapPrStatus } from "../lib/github/mappers"
 
 // ── Load env ──────────────────────────────────────────────────────────────────
 
@@ -102,45 +103,7 @@ function ghApi(endpoint: string): unknown {
   }
 }
 
-// ── Area inference ────────────────────────────────────────────────────────────
-
-const AREA_KEYWORDS: Record<string, string[]> = {
-  auth: ["auth", "login", "session", "password", "oauth", "sso", "identity"],
-  billing: ["billing", "payment", "invoice", "subscription", "stripe", "webhook"],
-  data: ["database", "migration", "schema", "audit", "log"],
-  deployments: ["deploy", "release", "rollback", "ci", "cd", "pipeline"],
-  platform: ["platform", "infrastructure", "infra", "permissions", "admin"],
-  observability: ["monitoring", "alert", "metric", "trace", "sentry", "datadog"],
-  frontend: ["ui", "frontend", "component", "css", "design", "ux"],
-}
-
-function inferArea(title: string, labels: string[]): string {
-  const text = [title, ...labels].join(" ").toLowerCase()
-  for (const [area, keywords] of Object.entries(AREA_KEYWORDS)) {
-    if (keywords.some((k) => text.includes(k))) return area
-  }
-  return "platform"
-}
-
-function inferRiskLevel(pr: GhPr | GhIssue, createdAt: string): "low" | "medium" | "high" {
-  const labels = (pr.labels ?? []).map((l) => l.name.toLowerCase())
-  if (labels.some((l) => ["high-risk", "breaking-change", "security", "critical"].includes(l))) {
-    return "high"
-  }
-  // Age heuristic: PRs open > PR_AGE_WARNING_DAYS are medium risk
-  const ageWarningDays = parseInt(process.env.PR_AGE_WARNING_DAYS ?? "7", 10)
-  const ageDays = (Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24)
-  if (ageDays > ageWarningDays) return "medium"
-  return "low"
-}
-
 // ── Upsert logic ──────────────────────────────────────────────────────────────
-
-function mapPrStatus(pr: GhPr): string {
-  if (pr.state === "closed") return "done"
-  if (pr.draft) return "in_progress"
-  return "in_review"
-}
 
 async function upsertWorkItem(
   db: ReturnType<typeof drizzle>,
@@ -206,12 +169,12 @@ async function main() {
       const externalId = `${repo}#${pr.number}`
       const labels = (pr.labels ?? []).map((l) => l.name)
       const area = inferArea(pr.title, labels)
-      const riskLevel = inferRiskLevel(pr, pr.created_at)
+      const riskLevel = inferRiskLevel(labels, pr.created_at, parseInt(process.env.PR_AGE_WARNING_DAYS ?? "7", 10))
 
       const item: schema.InsertWorkItem = {
         id: randomUUID(),
         title: `[PR #${pr.number}] ${pr.title}`,
-        status: mapPrStatus(pr),
+        status: mapPrStatus(pr.state, pr.draft ?? false),
         area,
         owner: pr.user?.login ?? null,
         riskLevel,
@@ -248,7 +211,7 @@ async function main() {
       const externalId = `${repo}!${issue.number}`
       const labels = (issue.labels ?? []).map((l) => l.name)
       const area = inferArea(issue.title, labels)
-      const riskLevel = inferRiskLevel(issue, issue.created_at)
+      const riskLevel = inferRiskLevel(labels, issue.created_at, parseInt(process.env.PR_AGE_WARNING_DAYS ?? "7", 10))
 
       const item: schema.InsertWorkItem = {
         id: randomUUID(),
