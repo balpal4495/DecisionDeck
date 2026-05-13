@@ -1,0 +1,35 @@
+{
+  "id": "de78f9f4-e8c0-4bc8-852c-081ddd0a8908",
+  "title": "Work Triage Scanner",
+  "slug": "product/work-triage-scanner",
+  "key_insight": "A heuristic-only triage classifier (lib/triage.ts) classifies all synced work items into active/queued/blocked/stale/done/abandoned using source-system dates from rawData. Council constraint: classification reason always shown, no person-level grouping, external URL always available.",
+  "affected_areas": [
+    "lib/triage.ts",
+    "app/triage/page.tsx",
+    "tests/triage/triage.test.ts",
+    "app/layout.tsx"
+  ],
+  "status": "open",
+  "confidence": 0.9,
+  "source_module": "FeatureBuilder",
+  "evidence_cited": [
+    "f6ab71da-8537-45fb-91d8-adea31fe2199",
+    "8bbabcec-7139-4bfa-961c-8011f407ff7d",
+    "4f9001e4-f21f-4f37-9fd9-799944b0f9a0"
+  ],
+  "alternatives_considered": [
+    "LLM-based classification",
+    "Decision Ledger CRUD as next phase"
+  ],
+  "rejected_reason": [
+    "LLM not wired; heuristics on date gaps and status are sufficient and transparent",
+    "Council deliberation determined triage addresses the real problem: 387 items with unknown signal-to-noise ratio"
+  ],
+  "scope": [
+    "product",
+    "triage",
+    "work-items",
+    "engineering-management"
+  ],
+  "timestamp": "2026-05-13T19:50:33.847Z"
+}
