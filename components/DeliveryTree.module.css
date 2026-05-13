@@ -1,4 +1,31 @@
-/* ─── Tree shell ─────────────────────────────────────────────────────────── */
+/* ── Source legend colours ─────────────────────────────────────────────────── */
+/* Jira = #0052cc (Jira blue)  GitHub = #8250df (GitHub purple)               */
+
+.sourceBadgeJira {
+  flex-shrink: 0;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  background: color-mix(in srgb, #0052cc 20%, transparent);
+  color: #4d9fff;
+  border: 1px solid color-mix(in srgb, #0052cc 40%, transparent);
+}
+
+.sourceBadgeGh {
+  flex-shrink: 0;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  background: color-mix(in srgb, #8250df 20%, transparent);
+  color: #c084fc;
+  border: 1px solid color-mix(in srgb, #8250df 40%, transparent);
+}
+
+/* ── Tree shell ────────────────────────────────────────────────────────────── */
 
 .tree {
   display: flex;
@@ -6,11 +33,12 @@
   gap: var(--space-3, 0.75rem);
 }
 
-/* ─── Epic ───────────────────────────────────────────────────────────────── */
+/* ── Epic ──────────────────────────────────────────────────────────────────── */
 
 .epicSection {
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-left: 3px solid #0052cc;
+  border-radius: 8px;
   overflow: hidden;
   background: var(--color-surface);
 }
@@ -20,8 +48,8 @@
   align-items: center;
   gap: 0.5rem;
   width: 100%;
-  padding: 0.75rem 1rem;
-  background: var(--color-surface-raised);
+  padding: 0.7rem 1rem;
+  background: color-mix(in srgb, #0052cc 8%, var(--color-surface-raised));
   border: none;
   cursor: pointer;
   text-align: left;
@@ -31,11 +59,12 @@
 }
 
 .epicHeader:hover {
-  background: color-mix(in srgb, var(--color-surface-raised) 80%, var(--color-accent) 20%);
+  background: color-mix(in srgb, #0052cc 15%, var(--color-surface-raised));
 }
 
 .epicNoEpic {
   cursor: default;
+  border-left-color: var(--color-border);
   opacity: 0.7;
 }
 
@@ -45,7 +74,7 @@
 
 .epicIcon {
   font-size: 1rem;
-  color: var(--color-accent);
+  color: #4d9fff;
   flex-shrink: 0;
   width: 1.1rem;
   text-align: center;
@@ -54,7 +83,7 @@
 .epicKey {
   font-family: var(--font-mono, monospace);
   font-size: 0.75rem;
-  color: var(--color-accent);
+  color: #4d9fff;
   text-decoration: none;
   flex-shrink: 0;
 }
@@ -64,7 +93,7 @@
 }
 
 .epicTitle {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--color-text);
   flex: 1;
@@ -75,7 +104,7 @@
 }
 
 .epicCount {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--color-text-muted);
   flex-shrink: 0;
   margin-left: auto;
@@ -85,7 +114,7 @@
   padding: 0.5rem 0;
 }
 
-/* ─── Sprint ─────────────────────────────────────────────────────────────── */
+/* ── Sprint ─────────────────────────────────────────────────────────────────── */
 
 .sprintSection {
   margin: 0 0.75rem 0.25rem;
@@ -99,7 +128,7 @@
   align-items: center;
   gap: 0.5rem;
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  padding: 0.45rem 0.75rem;
   background: transparent;
   border: none;
   border-bottom: 1px solid var(--color-border);
@@ -127,36 +156,36 @@
 }
 
 .sprintIcon {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   flex-shrink: 0;
   width: 1rem;
   text-align: center;
 }
 
 .sprintName {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 500;
   flex: 1;
   color: var(--color-text);
 }
 
 .activeBadge {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   padding: 0.1rem 0.4rem;
   border-radius: 3px;
   background: color-mix(in srgb, var(--color-accent) 20%, transparent);
   color: var(--color-accent);
-  font-weight: 600;
+  font-weight: 700;
   flex-shrink: 0;
 }
 
 .sprintCount {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--color-text-muted);
   flex-shrink: 0;
 }
 
-/* ─── Story list ─────────────────────────────────────────────────────────── */
+/* ── Story list ─────────────────────────────────────────────────────────────── */
 
 .storyList {
   list-style: none;
@@ -164,23 +193,24 @@
   padding: 0;
 }
 
-/* ─── Story row ──────────────────────────────────────────────────────────── */
+/* ── Story row (JIRA item) ──────────────────────────────────────────────────── */
 
-.storyRow {
+.storyOuter {
   border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
 }
 
-.storyRow:last-child {
+.storyOuter:last-child {
   border-bottom: none;
 }
 
-.storyMain {
+.storyRow {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.4rem;
-  padding: 0.5rem 0.75rem;
-  row-gap: 0.35rem;
+  padding: 0.45rem 0.75rem;
+  border-left: 3px solid color-mix(in srgb, #0052cc 30%, transparent);
+  row-gap: 0.3rem;
 }
 
 .storyClickable {
@@ -189,11 +219,11 @@
 }
 
 .storyClickable:hover {
-  background: color-mix(in srgb, var(--color-surface) 90%, var(--color-accent) 10%);
+  background: color-mix(in srgb, #0052cc 8%, transparent);
 }
 
 .storyIcon {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--color-text-muted);
   flex-shrink: 0;
   width: 1rem;
@@ -203,7 +233,7 @@
 .itemKey {
   font-family: var(--font-mono, monospace);
   font-size: 0.72rem;
-  color: var(--color-accent);
+  color: #4d9fff;
   text-decoration: none;
   flex-shrink: 0;
   white-space: nowrap;
@@ -243,30 +273,106 @@
   border-radius: 3px;
 }
 
-.subtaskCount {
+.subtaskCount,
+.prCount {
   font-size: 0.7rem;
   color: var(--color-text-muted);
 }
 
-/* ─── Subtask list ───────────────────────────────────────────────────────── */
+/* ── Child list (PRs + subtasks under a story) ──────────────────────────────── */
 
-.subtaskList {
+.childList {
   list-style: none;
   margin: 0;
   padding: 0;
-  background: color-mix(in srgb, var(--color-bg) 40%, transparent);
-  border-top: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
 }
 
-/* ─── Subtask row ────────────────────────────────────────────────────────── */
+/* ── PR row (GitHub item) ───────────────────────────────────────────────────── */
+
+.prRow {
+  border-top: 1px solid color-mix(in srgb, #8250df 25%, transparent);
+  background: color-mix(in srgb, #8250df 5%, transparent);
+  border-left: 3px solid color-mix(in srgb, #8250df 60%, transparent);
+}
+
+.prRowInner {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.75rem;
+  flex-wrap: wrap;
+}
+
+.prRowIcon {
+  font-size: 0.8rem;
+  color: #c084fc;
+  flex-shrink: 0;
+}
+
+.prStateLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.prStateOpen {
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: var(--color-accent);
+}
+
+.prStateMerged {
+  background: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+}
+
+.prStateClosed {
+  background: color-mix(in srgb, var(--color-text-muted) 15%, transparent);
+  color: var(--color-text-muted);
+}
+
+.prRowNum {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #c084fc;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.prRowNum:hover {
+  text-decoration: underline;
+}
+
+.prRowTitle {
+  font-size: 0.8rem;
+  color: var(--color-text);
+  flex: 1;
+  min-width: 0;
+}
+
+.prAge {
+  font-size: 0.68rem;
+  font-family: var(--font-mono, monospace);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.prAgeStale {
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 15%, transparent);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+}
+
+/* ── Subtask row (JIRA item) ─────────────────────────────────────────────────── */
 
 .subtaskRow {
-  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 30%, transparent);
-  padding: 0.35rem 0.75rem 0.35rem 2rem;
-}
-
-.subtaskRow:last-child {
-  border-bottom: none;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent);
+  border-left: 3px solid color-mix(in srgb, #0052cc 20%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 30%, transparent);
 }
 
 .subtaskMain {
@@ -274,6 +380,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 0.4rem;
+  padding: 0.38rem 0.75rem 0.38rem 2.25rem;
 }
 
 .subtaskBullet {
@@ -284,71 +391,7 @@
   text-align: center;
 }
 
-/* ─── PR chips ───────────────────────────────────────────────────────────── */
-
-.prList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-  flex-shrink: 0;
-}
-
-.prChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.7rem;
-  text-decoration: none;
-  font-family: var(--font-mono, monospace);
-  white-space: nowrap;
-  transition: opacity 0.12s;
-}
-
-.prChip:hover {
-  opacity: 0.8;
-}
-
-.prOpen {
-  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
-  color: var(--color-accent);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
-}
-
-.prMerged {
-  background: color-mix(in srgb, var(--color-success) 15%, transparent);
-  color: var(--color-success);
-  border: 1px solid color-mix(in srgb, var(--color-success) 40%, transparent);
-}
-
-.prClosed {
-  background: color-mix(in srgb, var(--color-text-muted) 15%, transparent);
-  color: var(--color-text-muted);
-  border: 1px solid color-mix(in srgb, var(--color-text-muted) 30%, transparent);
-}
-
-.prIcon {
-  font-style: normal;
-}
-
-.prNum {
-  font-weight: 600;
-}
-
-.prState {
-  opacity: 0.8;
-}
-
-.prStale {
-  background: color-mix(in srgb, var(--color-warning) 25%, transparent);
-  color: var(--color-warning);
-  padding: 0 0.25rem;
-  border-radius: 2px;
-  font-size: 0.65rem;
-}
-
-/* ─── Chevron ────────────────────────────────────────────────────────────── */
+/* ── Chevron ─────────────────────────────────────────────────────────────────── */
 
 .chevron {
   display: inline-block;

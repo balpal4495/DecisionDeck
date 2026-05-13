@@ -11,6 +11,16 @@ import type {
 } from "@/lib/delivery-tree"
 import styles from "./DeliveryTree.module.css"
 
+// ─── Source badges ────────────────────────────────────────────────────────────
+
+function JiraBadge() {
+  return <span className={styles.sourceBadgeJira}>JIRA</span>
+}
+
+function GithubBadge() {
+  return <span className={styles.sourceBadgeGh}>GH</span>
+}
+
 // ─── Status helpers ───────────────────────────────────────────────────────────
 
 const STATUS_LABEL: Record<string, string> = {
@@ -46,29 +56,36 @@ function issueIcon(issuetype: string): string {
   return ISSUETYPE_ICON[issuetype] ?? "◈"
 }
 
-// ─── PR leaf ─────────────────────────────────────────────────────────────────
+// ─── PR row ───────────────────────────────────────────────────────────────────
 
-function PrChip({ pr }: { pr: PRLeaf }) {
-  const cls =
-    pr.state === "merged" ? styles.prMerged
-    : pr.state === "closed" ? styles.prClosed
-    : styles.prOpen
+function PrRow({ pr, depth = 0 }: { pr: PRLeaf; depth?: number }) {
+  const stateCls =
+    pr.state === "merged" ? styles.prStateMerged
+    : pr.state === "closed" ? styles.prStateClosed
+    : styles.prStateOpen
 
   return (
-    <a
-      href={pr.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`${styles.prChip} ${cls}`}
-      title={pr.title}
-    >
-      <span className={styles.prIcon}>⌥</span>
-      <span className={styles.prNum}>#{pr.number}</span>
-      <span className={styles.prState}>{pr.state}</span>
-      {pr.daysOld > 14 && pr.state === "open" && (
-        <span className={styles.prStale}>{pr.daysOld}d</span>
-      )}
-    </a>
+    <li className={styles.prRow} style={{ paddingLeft: `${1.25 + depth * 1.5}rem` }}>
+      <div className={styles.prRowInner}>
+        <GithubBadge />
+        <span className={styles.prRowIcon}>⌥</span>
+        <span className={`${styles.prStateLabel} ${stateCls}`}>{pr.state}</span>
+        <a
+          href={pr.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.prRowNum}
+        >
+          #{pr.number}
+        </a>
+        <span className={styles.prRowTitle}>{pr.title}</span>
+        {pr.daysOld > 0 && (
+          <span className={`${styles.prAge} ${pr.state === "open" && pr.daysOld > 14 ? styles.prAgeStale : ""}`}>
+            {pr.daysOld}d
+          </span>
+        )}
+      </div>
+    </li>
   )
 }
 
@@ -76,37 +93,36 @@ function PrChip({ pr }: { pr: PRLeaf }) {
 
 function SubtaskRow({ node }: { node: SubtaskNode }) {
   return (
-    <li className={styles.subtaskRow}>
-      <div className={styles.subtaskMain}>
-        <span className={styles.subtaskBullet}>◇</span>
-        <span className={`${styles.badge} ${statusClass(node.status)}`}>
-          {STATUS_LABEL[node.status] ?? node.statusRaw}
-        </span>
-        {node.url ? (
-          <a
-            href={node.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.itemKey}
-          >
-            {node.key}
-          </a>
-        ) : (
-          <span className={styles.itemKey}>{node.key}</span>
-        )}
-        <span className={styles.itemTitle}>{node.title}</span>
-        {node.assignee && (
-          <span className={styles.assignee}>{node.assignee}</span>
-        )}
-      </div>
-      {node.prs.length > 0 && (
-        <div className={styles.prList}>
-          {node.prs.map(pr => (
-            <PrChip key={pr.number} pr={pr} />
-          ))}
+    <>
+      <li className={styles.subtaskRow}>
+        <div className={styles.subtaskMain}>
+          <JiraBadge />
+          <span className={styles.subtaskBullet}>◇</span>
+          <span className={`${styles.badge} ${statusClass(node.status)}`}>
+            {STATUS_LABEL[node.status] ?? node.statusRaw}
+          </span>
+          {node.url ? (
+            <a
+              href={node.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.itemKey}
+            >
+              {node.key}
+            </a>
+          ) : (
+            <span className={styles.itemKey}>{node.key}</span>
+          )}
+          <span className={styles.itemTitle}>{node.title}</span>
+          {node.assignee && (
+            <span className={styles.assignee}>{node.assignee}</span>
+          )}
         </div>
-      )}
-    </li>
+      </li>
+      {node.prs.map(pr => (
+        <PrRow key={pr.number} pr={pr} depth={1} />
+      ))}
+    </>
   )
 }
 
@@ -118,17 +134,19 @@ function StoryRow({ node }: { node: StoryNode }) {
   const toggle = useCallback(() => setExpanded(e => !e), [])
 
   return (
-    <li className={styles.storyRow}>
+    <li className={styles.storyOuter}>
+      {/* Jira story row */}
       <div
-        className={`${styles.storyMain} ${hasChildren ? styles.storyClickable : ""}`}
+        className={`${styles.storyRow} ${hasChildren ? styles.storyClickable : ""}`}
         onClick={hasChildren ? toggle : undefined}
         role={hasChildren ? "button" : undefined}
         aria-expanded={hasChildren ? expanded : undefined}
       >
-        {hasChildren && (
-          <span className={`${styles.chevron} ${expanded ? styles.chevronOpen : ""}`}>›</span>
-        )}
-        {!hasChildren && <span className={styles.chevronPlaceholder} />}
+        <JiraBadge />
+
+        {hasChildren
+          ? <span className={`${styles.chevron} ${expanded ? styles.chevronOpen : ""}`}>›</span>
+          : <span className={styles.chevronPlaceholder} />}
 
         <span className={styles.storyIcon}>{issueIcon(node.issuetype)}</span>
 
@@ -158,21 +176,24 @@ function StoryRow({ node }: { node: StoryNode }) {
             <span className={styles.points}>{node.storyPoints}pt</span>
           )}
           {node.subtasks.length > 0 && (
-            <span className={styles.subtaskCount}>{node.subtasks.length} sub-task{node.subtasks.length !== 1 ? "s" : ""}</span>
+            <span className={styles.subtaskCount}>
+              {node.subtasks.length} sub-task{node.subtasks.length !== 1 ? "s" : ""}
+            </span>
+          )}
+          {node.prs.length > 0 && (
+            <span className={styles.prCount}>
+              {node.prs.length} PR{node.prs.length !== 1 ? "s" : ""}
+            </span>
           )}
         </div>
-
-        {node.prs.length > 0 && (
-          <div className={styles.prList} onClick={e => e.stopPropagation()}>
-            {node.prs.map(pr => (
-              <PrChip key={pr.number} pr={pr} />
-            ))}
-          </div>
-        )}
       </div>
 
-      {expanded && node.subtasks.length > 0 && (
-        <ul className={styles.subtaskList}>
+      {/* Expanded: PR rows then subtask rows (each with their own PRs) */}
+      {expanded && (
+        <ul className={styles.childList}>
+          {node.prs.map(pr => (
+            <PrRow key={pr.number} pr={pr} depth={0} />
+          ))}
           {node.subtasks.map(st => (
             <SubtaskRow key={st.key} node={st} />
           ))}
