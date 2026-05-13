@@ -1,0 +1,231 @@
+/* ── Layout ───────────────────────────────────────────────────────────── */
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+}
+
+.header {
+  margin-bottom: var(--space-8);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Answer blocks ─────────────────────────────────────────────────────── */
+
+.answerBlock {
+  margin-bottom: var(--space-8);
+}
+
+.blockHeading {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.blockQuestion {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.blockCount {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.blockEmpty {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: var(--space-4) 0;
+}
+
+/* ── Table ─────────────────────────────────────────────────────────────── */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.table thead tr {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table th {
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: var(--space-3) var(--space-3) var(--space-3) 0;
+  vertical-align: top;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background: var(--color-surface);
+}
+
+/* ── Column widths ─────────────────────────────────────────────────────── */
+
+.colKey    { width: 90px; }
+.colSprint { width: 90px; }
+.colPr     { width: 110px; }
+.colHeat   { width: 70px; }
+
+/* ── Cell content ──────────────────────────────────────────────────────── */
+
+.key {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.keyLink {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.keyLink:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.titleText {
+  color: var(--color-text);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.assignee {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* ── Heat indicators ───────────────────────────────────────────────────── */
+
+.heatDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: var(--space-2);
+  vertical-align: middle;
+}
+
+.heatHot    { background: var(--color-success); }
+.heatWarm   { background: var(--color-warning); }
+.heatCold   { background: var(--color-info); }
+.heatFrozen { background: var(--color-danger); }
+.heatUnknown { background: var(--color-border); }
+
+.heatLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* ── PR status ─────────────────────────────────────────────────────────── */
+
+.prLink {
+  font-size: 0.8rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.prOpen   { color: var(--color-success); }
+.prMerged { color: var(--color-text-muted); }
+.prClosed { color: var(--color-danger); }
+.prNone   { color: var(--color-danger); font-style: italic; }
+
+/* ── Sprint badge ──────────────────────────────────────────────────────── */
+
+.sprintBadge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.sprintActive { background: rgba(92,184,92,0.15); color: var(--color-success); }
+.sprintFuture { background: rgba(109,123,255,0.15); color: var(--color-accent); }
+.sprintNone   { color: var(--color-text-muted); font-size: 0.75rem; }
+
+/* ── Shadow PR rows ─────────────────────────────────────────────────────── */
+
+.prRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.875rem;
+}
+
+.prRow:last-child {
+  border-bottom: none;
+}
+
+.prRowTitle {
+  flex: 1;
+  color: var(--color-text);
+}
+
+.prRowMeta {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* ── Heat legend ─────────────────────────────────────────────────────────── */
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}

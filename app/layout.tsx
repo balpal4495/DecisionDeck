@@ -43,6 +43,11 @@ export default function RootLayout({
                   Triage
                 </NavLink>
               </li>
+              <li className={styles.navItem}>
+                <NavLink href="/pulse" className={styles.navLink} activeClassName={styles.navLinkActive}>
+                  Pulse
+                </NavLink>
+              </li>
               <div className={styles.navDivider} />
               <li className={styles.navItem}>
                 <NavLink href="/risks" className={styles.navLink} activeClassName={styles.navLinkActive}>

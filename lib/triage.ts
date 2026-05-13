@@ -40,6 +40,29 @@ export type TriageCategory =
   | "done"      // completed — valid but noise in raw count
   | "abandoned" // created and forgotten — probable noise
 
+/**
+ * Work class — structural role of an item in the work hierarchy.
+ *
+ * Modelled on the hot/warm/cold data tier analogy (aging WIP):
+ *   - deliverable  → hot: real work item that should have code activity
+ *   - planned      → warm: planned but not yet flowing
+ *   - container    → structural tracker — no PR ever expected
+ *   - placeholder  → cold: backlog with no planning signal at all
+ *   - zombie       → frozen: drifting without a structural excuse
+ */
+export type WorkClass =
+  | "deliverable"   // has sprint + assignee + story points → expects a PR
+  | "planned"       // has sprint OR story points OR assignee — warm signal
+  | "container"     // epic, has subtasks, or title matches phase/milestone pattern
+  | "placeholder"   // no sprint, no points, no assignee — pure backlog noise
+  | "zombie"        // none of the above — in-progress with no planning signal
+
+/** Reason the work class was assigned — always surfaced in the UI */
+export interface WorkClassResult {
+  workClass: WorkClass
+  reason: string
+}
+
 export interface TriageResult {
   id: string
   title: string
@@ -50,6 +73,10 @@ export interface TriageResult {
   externalUrl: string | null
   source: string
   category: TriageCategory
+  /** Structural role of this item in the work hierarchy */
+  workClass: WorkClass
+  /** Why this work class was assigned */
+  workClassReason: string
   /** Specific signal that drove this classification — always shown in the UI */
   signal: string
   /** Days since last update in source system. -1 = unknown */
@@ -127,7 +154,91 @@ function daysBetween(a: Date, b: Date): number {
   return Math.floor(Math.abs(b.getTime() - a.getTime()) / (1000 * 60 * 60 * 24))
 }
 
-// ── Classifier ────────────────────────────────────────────────────────────────
+// ── Work class classifier ─────────────────────────────────────────────────────
+
+/**
+ * Title patterns that indicate a container/tracker ticket rather than a
+ * deliverable. Order matters — first match wins.
+ */
+export const CONTAINER_TITLE_PATTERNS: readonly RegExp[] = [
+  /\bphase\s*\d+\b/i,           // "Phase 1", "Phase2", "Phase 3 — Foundation"
+  /\bphase\s*[a-z]+\b/i,        // "Phase Alpha", "Phase Final"
+  /\bmilestone\b/i,             // "Milestone: Go Live"
+  /\btracker\b/i,               // "[TRACKER]", "Sprint Tracker"
+  /\brollup\b/i,                // "Rollup", "Epic Rollup"
+  /\bsign[\s-]?off\b/i,         // "Sign-off", "Sign Off", "Signoff"
+  /\bgo[\s-]?live\b/i,          // "Go Live", "Go-Live"
+  /\bhandover\b/i,              // "Handover to Ops"
+  /\bkick[\s-]?off\b/i,         // "Kickoff", "Kick-off"
+  /\b(epic|initiative)\s+track/i, // "Epic Tracking", "Initiative tracker"
+  /\[\s*epic\s*\]/i,            // "[Epic]"
+  /\bcontainer\b/i,             // explicitly named container
+]
+
+/**
+ * Determine the structural role (work class) of a Jira work item.
+ * GitHub PRs are always deliverables — they are code.
+ *
+ * Uses rawData fields: issuetype, subtasks, customfield_10007 (sprint),
+ * customfield_10005 / customfield_11725 (story points), assignee.
+ */
+export function classifyWorkClass(item: WorkItem): WorkClassResult {
+  if (item.source === "github") {
+    return { workClass: "deliverable", reason: "GitHub PR — code artefact" }
+  }
+
+  let fields: Record<string, unknown> = {}
+  try {
+    const parsed = JSON.parse(item.rawData ?? "{}") as Record<string, unknown>
+    fields = (parsed.fields ?? {}) as Record<string, unknown>
+  } catch {
+    // malformed rawData — fall through to placeholder
+  }
+
+  const issuetype = ((fields.issuetype as Record<string, unknown>)?.name as string ?? "").toLowerCase()
+  const subtasks = (fields.subtasks as unknown[]) ?? []
+  const hasSubtasks = subtasks.length > 0
+
+  // 1. Structural containers — issuetype or subtasks
+  if (issuetype.includes("epic") || issuetype === "initiative" || issuetype === "feature") {
+    return { workClass: "container", reason: `Issue type is ${issuetype}` }
+  }
+  if (hasSubtasks) {
+    return { workClass: "container", reason: `Has ${subtasks.length} subtask${subtasks.length !== 1 ? "s" : ""} — acts as parent` }
+  }
+
+  // 2. Title-pattern containers
+  const titleForMatch = item.title.replace(/^\[.*?\]\s*/, "") // strip "[DBD-1234]" prefix
+  for (const pattern of CONTAINER_TITLE_PATTERNS) {
+    if (pattern.test(titleForMatch)) {
+      return { workClass: "container", reason: `Title matches container pattern: ${pattern.source}` }
+    }
+  }
+
+  // 3. Planning signal detection
+  const sprintArr = (fields.customfield_10007 as Record<string, unknown>[]) ?? []
+  const inSprint = sprintArr.length > 0
+  const storyPoints = (fields.customfield_10005 as number | null) ?? (fields.customfield_11725 as number | null) ?? null
+  const hasPoints = storyPoints !== null && storyPoints !== undefined
+  const hasAssignee = fields.assignee != null
+
+  if (inSprint && hasPoints && hasAssignee) {
+    return { workClass: "deliverable", reason: "In sprint, has story points and assignee" }
+  }
+  if (inSprint && hasPoints) {
+    return { workClass: "deliverable", reason: "In sprint with story points" }
+  }
+  if (inSprint || hasPoints || hasAssignee) {
+    return { workClass: "planned", reason: `Warm signal: ${[inSprint && "in sprint", hasPoints && `${storyPoints} pts`, hasAssignee && "assigned"].filter(Boolean).join(", ")}` }
+  }
+
+  // 4. In-progress with no planning signal → zombie
+  if (item.status === "in_progress" || item.status === "in_review") {
+    return { workClass: "zombie", reason: "In progress but no sprint, story points, or assignee" }
+  }
+
+  return { workClass: "placeholder", reason: "No sprint, story points, or assignee — backlog noise" }
+}
 
 /**
  * Classify a single work item.
@@ -143,6 +254,8 @@ export function classifyWorkItem(
     item.rawData ?? null,
     item.source,
   )
+
+  const { workClass, reason: workClassReason } = classifyWorkClass(item)
 
   const updateDate = updated ? new Date(updated) : null
   const createDate = created ? new Date(created) : null
@@ -225,6 +338,8 @@ export function classifyWorkItem(
     externalUrl: item.externalUrl ?? null,
     source: item.source,
     category,
+    workClass,
+    workClassReason,
     signal,
     daysSinceUpdate,
     daysSinceCreated,
