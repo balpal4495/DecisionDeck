@@ -13,6 +13,7 @@
     "sync:github": "tsx scripts/sync-github.ts",
     "chronicle:commit": "tsx scripts/chronicle-commit-all.ts",
     "sentinel:check": "tsx scripts/sentinel-check.ts",
+    "sentinel:pr": "tsx scripts/sentinel-pr.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },
