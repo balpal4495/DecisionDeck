@@ -1,0 +1,427 @@
+/* ─── Tree shell ─────────────────────────────────────────────────────────── */
+
+.tree {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+}
+
+/* ─── Epic ───────────────────────────────────────────────────────────────── */
+
+.epicSection {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.epicHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--color-surface-raised);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+  transition: background 0.15s;
+}
+
+.epicHeader:hover {
+  background: color-mix(in srgb, var(--color-surface-raised) 80%, var(--color-accent) 20%);
+}
+
+.epicNoEpic {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.epicNoEpic:hover {
+  background: var(--color-surface-raised);
+}
+
+.epicIcon {
+  font-size: 1rem;
+  color: var(--color-accent);
+  flex-shrink: 0;
+  width: 1.1rem;
+  text-align: center;
+}
+
+.epicKey {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.epicKey:hover {
+  text-decoration: underline;
+}
+
+.epicTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.epicCount {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.epicBody {
+  padding: 0.5rem 0;
+}
+
+/* ─── Sprint ─────────────────────────────────────────────────────────────── */
+
+.sprintSection {
+  margin: 0 0.75rem 0.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.sprintHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  text-align: left;
+  color: var(--color-text-muted);
+  transition: background 0.15s;
+}
+
+.sprintHeader:hover {
+  background: color-mix(in srgb, var(--color-surface) 85%, var(--color-accent) 15%);
+}
+
+.sprintNoSprint {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.sprintNoSprint:hover {
+  background: transparent;
+}
+
+.sprintActive {
+  border-left: 3px solid var(--color-accent);
+}
+
+.sprintIcon {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  width: 1rem;
+  text-align: center;
+}
+
+.sprintName {
+  font-size: 0.8rem;
+  font-weight: 500;
+  flex: 1;
+  color: var(--color-text);
+}
+
+.activeBadge {
+  font-size: 0.68rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  color: var(--color-accent);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.sprintCount {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+/* ─── Story list ─────────────────────────────────────────────────────────── */
+
+.storyList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Story row ──────────────────────────────────────────────────────────── */
+
+.storyRow {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+}
+
+.storyRow:last-child {
+  border-bottom: none;
+}
+
+.storyMain {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  row-gap: 0.35rem;
+}
+
+.storyClickable {
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.storyClickable:hover {
+  background: color-mix(in srgb, var(--color-surface) 90%, var(--color-accent) 10%);
+}
+
+.storyIcon {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  width: 1rem;
+  text-align: center;
+}
+
+.itemKey {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: var(--color-accent);
+  text-decoration: none;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.itemKey:hover {
+  text-decoration: underline;
+}
+
+.itemTitle {
+  font-size: 0.82rem;
+  color: var(--color-text);
+  flex: 1;
+  min-width: 0;
+}
+
+.storyMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.assignee {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.points {
+  font-size: 0.7rem;
+  font-family: var(--font-mono, monospace);
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-border) 60%, transparent);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+}
+
+.subtaskCount {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+}
+
+/* ─── Subtask list ───────────────────────────────────────────────────────── */
+
+.subtaskList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: color-mix(in srgb, var(--color-bg) 40%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+}
+
+/* ─── Subtask row ────────────────────────────────────────────────────────── */
+
+.subtaskRow {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 30%, transparent);
+  padding: 0.35rem 0.75rem 0.35rem 2rem;
+}
+
+.subtaskRow:last-child {
+  border-bottom: none;
+}
+
+.subtaskMain {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.subtaskBullet {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  width: 0.9rem;
+  text-align: center;
+}
+
+/* ─── PR chips ───────────────────────────────────────────────────────────── */
+
+.prList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.prChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  text-decoration: none;
+  font-family: var(--font-mono, monospace);
+  white-space: nowrap;
+  transition: opacity 0.12s;
+}
+
+.prChip:hover {
+  opacity: 0.8;
+}
+
+.prOpen {
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: var(--color-accent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+
+.prMerged {
+  background: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+  border: 1px solid color-mix(in srgb, var(--color-success) 40%, transparent);
+}
+
+.prClosed {
+  background: color-mix(in srgb, var(--color-text-muted) 15%, transparent);
+  color: var(--color-text-muted);
+  border: 1px solid color-mix(in srgb, var(--color-text-muted) 30%, transparent);
+}
+
+.prIcon {
+  font-style: normal;
+}
+
+.prNum {
+  font-weight: 600;
+}
+
+.prState {
+  opacity: 0.8;
+}
+
+.prStale {
+  background: color-mix(in srgb, var(--color-warning) 25%, transparent);
+  color: var(--color-warning);
+  padding: 0 0.25rem;
+  border-radius: 2px;
+  font-size: 0.65rem;
+}
+
+/* ─── Chevron ────────────────────────────────────────────────────────────── */
+
+.chevron {
+  display: inline-block;
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  transition: transform 0.15s;
+  flex-shrink: 0;
+  width: 1rem;
+  text-align: center;
+  line-height: 1;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.chevronPlaceholder {
+  display: inline-block;
+  width: 1rem;
+  flex-shrink: 0;
+}
+
+/* ─── Status badges ──────────────────────────────────────────────────────── */
+
+.badge {
+  font-size: 0.67rem;
+  font-weight: 600;
+  padding: 0.1rem 0.45rem;
+  border-radius: 3px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.statusDone {
+  background: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+}
+
+.statusInProgress {
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: var(--color-accent);
+}
+
+.statusInReview {
+  background: color-mix(in srgb, var(--color-warning) 15%, transparent);
+  color: var(--color-warning);
+}
+
+.statusBlocked {
+  background: color-mix(in srgb, var(--color-danger) 15%, transparent);
+  color: var(--color-danger);
+}
+
+.statusTodo {
+  background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+  color: var(--color-text-muted);
+}
+
+/* ─── Empty state ────────────────────────────────────────────────────────── */
+
+.empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--color-text-muted);
+}
+
+.emptyTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+.emptyHint {
+  font-size: 0.85rem;
+}

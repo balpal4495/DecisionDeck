@@ -1,31 +1,26 @@
 import { db } from "@/db"
 import { workItems } from "@/db/schema"
-import { buildTimeline } from "@/lib/timeline"
-import TimelineGL from "@/components/TimelineGL"
+import { buildDeliveryTree } from "@/lib/delivery-tree"
+import DeliveryTree from "@/components/DeliveryTree"
 import styles from "./page.module.css"
 
 export default async function TimelinePage() {
   const rows = await db.select().from(workItems)
-  const data = buildTimeline(rows)
-
-  // Serialise (Date objects → plain numbers are already numbers, just strip
-  // any non-serialisable values to be safe)
-  const serialised = JSON.parse(JSON.stringify(data))
+  const data = buildDeliveryTree(rows)
 
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Delivery Timeline</h1>
+        <h1 className={styles.title}>Delivery</h1>
         <p className={styles.subtitle}>
-          Jira ticket lifecycle overlaid with GitHub PR events ·{" "}
-          {data.rows.length} ticket{data.rows.length !== 1 ? "s" : ""} ·{" "}
-          {data.events.length} event{data.events.length !== 1 ? "s" : ""} ·{" "}
-          {data.exceptions.length > 0
-            ? `${data.exceptions.length} exception${data.exceptions.length !== 1 ? "s" : ""} need attention`
-            : "no exceptions"}
+          {data.stats.epics} epic{data.stats.epics !== 1 ? "s" : ""} ·{" "}
+          {data.stats.sprints} sprint{data.stats.sprints !== 1 ? "s" : ""} ·{" "}
+          {data.stats.stories} stor{data.stats.stories !== 1 ? "ies" : "y"} ·{" "}
+          {data.stats.subtasks} sub-task{data.stats.subtasks !== 1 ? "s" : ""} ·{" "}
+          {data.stats.prs} PR{data.stats.prs !== 1 ? "s" : ""}
         </p>
       </div>
-      <TimelineGL data={serialised} />
+      <DeliveryTree data={data} />
     </div>
   )
 }
