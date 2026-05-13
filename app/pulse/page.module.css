@@ -28,12 +28,25 @@
   margin-bottom: var(--space-8);
 }
 
+/*
+ * Each section has a coloured left-bar to signal its purpose at a glance:
+ *   Sprint  — accent blue  (the plan)
+ *   Warning — amber        (work without code — needs attention)
+ *   Shadow  — purple       (unplanned work — interesting / risky)
+ */
 .blockHeading {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-3);
   margin-bottom: var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid var(--color-border);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
+
+.blockHeadingSprint  { border-left-color: var(--color-accent); }
+.blockHeadingWarning { border-left-color: var(--color-warning); }
+.blockHeadingShadow  { border-left-color: #7c3aed; }
 
 .blockQuestion {
   font-size: 1rem;
@@ -92,10 +105,12 @@
 
 /* ── Column widths ─────────────────────────────────────────────────────── */
 
-.colKey    { width: 90px; }
-.colSprint { width: 90px; }
-.colPr     { width: 110px; }
-.colHeat   { width: 70px; }
+.colKey     { width: 90px; }
+.colSprint  { width: 100px; }
+.colPr      { width: 110px; }
+.colStatus  { width: 110px; }
+.colAge     { width: 70px; }
+.colReason  { width: 170px; }
 
 /* ── Cell content ──────────────────────────────────────────────────────── */
 
@@ -128,41 +143,125 @@
   margin-top: 2px;
 }
 
-/* ── Heat indicators ───────────────────────────────────────────────────── */
+.statusNote {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+  text-transform: capitalize;
+}
+
+/* ── Age indicator ─────────────────────────────────────────────────────── */
+/*
+ * This signals "when did this item last move?" — NOT health or success.
+ *
+ * Grey  = recently active (0–14d) — expected, no alarm
+ * Amber = slowing (14–30d) — worth watching
+ * Red   = stuck (30+d) — needs action
+ *
+ * No green: recently-touched is NORMAL, not a success state.
+ * Only the absence of recent activity should draw the eye.
+ */
 
 .heatDot {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   margin-right: var(--space-2);
   vertical-align: middle;
+  flex-shrink: 0;
 }
 
-.heatHot    { background: var(--color-success); }
-.heatWarm   { background: var(--color-warning); }
-.heatCold   { background: var(--color-info); }
-.heatFrozen { background: var(--color-danger); }
+.heatHot    { background: #9ca3af; }                   /* 0–2d   — active, fine   */
+.heatWarm   { background: #6b7280; }                   /* 3–14d  — normal cadence */
+.heatCold   { background: var(--color-warning); }      /* 14–30d — slowing, watch */
+.heatFrozen { background: var(--color-danger); }       /* 30+d   — stuck, act now */
 .heatUnknown { background: var(--color-border); }
 
 .heatLabel {
+  display: inline-flex;
+  align-items: center;
   font-size: 0.75rem;
   color: var(--color-text-muted);
   white-space: nowrap;
 }
 
-/* ── PR status ─────────────────────────────────────────────────────────── */
+/* ── PR status badges ──────────────────────────────────────────────────── */
+/*
+ * Pill badges — PR state without conflating "open" with "success":
+ *
+ * Blue   = Open (in flight — neutral)
+ * Amber  = In review (pending someone's action)
+ * Green  = Merged (done — the only time green appears here)
+ * Red    = No PR on a sprint item (real signal — expected to have code)
+ */
 
-.prLink {
-  font-size: 0.8rem;
+.prBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
+  border: 1px solid transparent;
+  cursor: default;
 }
 
-.prOpen   { color: var(--color-success); }
-.prMerged { color: var(--color-text-muted); }
-.prClosed { color: var(--color-danger); }
-.prNone   { color: var(--color-danger); font-style: italic; }
+a.prBadge { cursor: pointer; }
+
+.prOpen {
+  background: rgba(109, 123, 255, 0.12);
+  color: var(--color-accent);
+  border-color: rgba(109, 123, 255, 0.25);
+}
+
+a.prOpen:hover {
+  background: rgba(109, 123, 255, 0.22);
+  text-decoration: none;
+}
+
+.prInReview {
+  background: rgba(255, 179, 71, 0.12);
+  color: var(--color-warning);
+  border-color: rgba(255, 179, 71, 0.25);
+}
+
+a.prInReview:hover {
+  background: rgba(255, 179, 71, 0.22);
+  text-decoration: none;
+}
+
+.prMerged {
+  background: rgba(92, 184, 92, 0.08);
+  color: #5cb85c;
+  border-color: rgba(92, 184, 92, 0.15);
+}
+
+a.prMerged:hover { text-decoration: none; }
+
+/* No PR (urgent) — red: sprint item with no code is a real signal */
+.prNone {
+  background: rgba(255, 95, 109, 0.08);
+  color: var(--color-danger);
+  border-color: rgba(255, 95, 109, 0.2);
+  font-style: italic;
+}
+
+/* No PR (soft) — outside the sprint, it's expected or not relevant */
+.prNoneSoft {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ── Shadow PR reason note ─────────────────────────────────────────────── */
+
+.noKeyNote {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
 
 /* ── Sprint badge ──────────────────────────────────────────────────────── */
 
@@ -177,38 +276,11 @@
   white-space: nowrap;
 }
 
-.sprintActive { background: rgba(92,184,92,0.15); color: var(--color-success); }
-.sprintFuture { background: rgba(109,123,255,0.15); color: var(--color-accent); }
+.sprintActive { background: rgba(92, 184, 92, 0.12); color: #5cb85c; }
+.sprintFuture { background: rgba(109, 123, 255, 0.12); color: var(--color-accent); }
 .sprintNone   { color: var(--color-text-muted); font-size: 0.75rem; }
 
-/* ── Shadow PR rows ─────────────────────────────────────────────────────── */
-
-.prRow {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--color-border);
-  font-size: 0.875rem;
-}
-
-.prRow:last-child {
-  border-bottom: none;
-}
-
-.prRowTitle {
-  flex: 1;
-  color: var(--color-text);
-}
-
-.prRowMeta {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-}
-
-/* ── Heat legend ─────────────────────────────────────────────────────────── */
+/* ── Age legend ─────────────────────────────────────────────────────────── */
 
 .legend {
   display: flex;

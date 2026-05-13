@@ -52,26 +52,34 @@ function HeatCell({ days }: { days: number }) {
 
 // ── PR status cell ────────────────────────────────────────────────────────
 
-function PrCell({ pr }: { pr: PulsePr | undefined }) {
+/**
+ * urgent=true  → "No PR" is a red badge (sprint item with no code is a real signal)
+ * urgent=false → "No PR" is muted text (outside sprint, it's expected or irrelevant)
+ */
+function PrCell({ pr, urgent }: { pr: PulsePr | undefined; urgent?: boolean }) {
   if (!pr) {
-    return <span className={`${styles.prLink} ${styles.prNone}`}>No PR</span>
+    return urgent
+      ? <span className={`${styles.prBadge} ${styles.prNone}`}>No PR</span>
+      : <span className={styles.prNoneSoft}>No PR</span>
   }
-  const label =
-    pr.status === "done"
-      ? "Merged ↗"
-      : pr.status === "in_review"
-        ? "In review ↗"
-        : "Open ↗"
-  const cls =
-    pr.status === "done" ? styles.prMerged : styles.prOpen
+  const label = pr.status === "done"
+    ? "Merged"
+    : pr.status === "in_review"
+      ? "In review"
+      : "Open"
+  const cls = pr.status === "done"
+    ? styles.prMerged
+    : pr.status === "in_review"
+      ? styles.prInReview
+      : styles.prOpen
   if (pr.externalUrl) {
     return (
-      <a href={pr.externalUrl} target="_blank" rel="noreferrer" className={`${styles.prLink} ${cls}`}>
-        {label}
+      <a href={pr.externalUrl} target="_blank" rel="noreferrer" className={`${styles.prBadge} ${cls}`}>
+        {label} ↗
       </a>
     )
   }
-  return <span className={`${styles.prLink} ${cls}`}>{label.replace(" ↗", "")}</span>
+  return <span className={`${styles.prBadge} ${cls}`}>{label}</span>
 }
 
 // ── Sprint cell ───────────────────────────────────────────────────────────
@@ -105,7 +113,14 @@ function KeyCell({ jira }: { jira: PulseJira }) {
 
 // ── Table row ─────────────────────────────────────────────────────────────
 
-function TicketRow({ jira, pr }: { jira: PulseJira; pr?: PulsePr }) {
+/**
+ * variant="sprint"   — Key | Title | Sprint | PR (urgent) | Age
+ * variant="needs-pr" — Key | Title | Status | Age
+ *   ("No PR" column removed: the entire section IS "no PR", it's just noise)
+ */
+function TicketRow({ jira, pr, variant = "sprint" }: {
+  jira: PulseJira; pr?: PulsePr; variant?: "sprint" | "needs-pr"
+}) {
   const staleDays = pr
     ? Math.min(
         jira.daysStale >= 0 ? jira.daysStale : Infinity,
@@ -125,13 +140,24 @@ function TicketRow({ jira, pr }: { jira: PulseJira; pr?: PulsePr }) {
           <div className={styles.assignee}>{jira.assignee.split(" ")[0]}</div>
         )}
       </td>
-      <td className={styles.colSprint}>
-        <SprintCell sprint={jira.sprint} sprintState={jira.sprintState} />
-      </td>
-      <td className={styles.colPr}>
-        <PrCell pr={pr} />
-      </td>
-      <td className={styles.colHeat}>
+      {variant === "sprint" && (
+        <td className={styles.colSprint}>
+          <SprintCell sprint={jira.sprint} sprintState={jira.sprintState} />
+        </td>
+      )}
+      {variant === "needs-pr" && (
+        <td className={styles.colStatus}>
+          <span className={styles.statusNote}>
+            {jira.status.replace(/_/g, " ")}
+          </span>
+        </td>
+      )}
+      {variant === "sprint" && (
+        <td className={styles.colPr}>
+          <PrCell pr={pr} urgent />
+        </td>
+      )}
+      <td className={styles.colAge}>
         <HeatCell days={effectiveDays} />
       </td>
     </tr>
@@ -191,15 +217,15 @@ export default async function PulsePage() {
         </p>
       </div>
 
-      {/* Heat legend */}
+      {/* Age legend */}
       <div className={styles.legend}>
         <span>Last moved:</span>
         {(
           [
-            { cls: styles.heatHot,    label: "Hot — today or yesterday" },
-            { cls: styles.heatWarm,   label: "Warm — 3–14 days" },
-            { cls: styles.heatCold,   label: "Cold — 14–30 days" },
-            { cls: styles.heatFrozen, label: "Frozen — 30+ days" },
+            { cls: styles.heatHot,    label: "Active — 0–2 days" },
+            { cls: styles.heatWarm,   label: "Recent — 3–14 days" },
+            { cls: styles.heatCold,   label: "Stale — 14–30 days" },
+            { cls: styles.heatFrozen, label: "Stuck — 30+ days" },
           ] as const
         ).map(({ cls, label }) => (
           <span key={label} className={styles.legendItem}>
@@ -211,7 +237,7 @@ export default async function PulsePage() {
 
       {/* ── Section 1: Active sprint ── */}
       <section className={styles.answerBlock}>
-        <div className={styles.blockHeading}>
+        <div className={`${styles.blockHeading} ${styles.blockHeadingSprint}`}>
           <span className={styles.blockQuestion}>Active sprint</span>
           <span className={styles.blockCount}>
             {activeSprint.length} item{activeSprint.length !== 1 ? "s" : ""} ·{" "}
@@ -228,7 +254,7 @@ export default async function PulsePage() {
                 <th>Title</th>
                 <th className={styles.colSprint}>Sprint</th>
                 <th className={styles.colPr}>PR</th>
-                <th className={styles.colHeat}>Heat</th>
+                <th className={styles.colAge}>Age</th>
               </tr>
             </thead>
             <tbody>
@@ -246,7 +272,7 @@ export default async function PulsePage() {
 
       {/* ── Section 2: Needs a PR ── */}
       <section className={styles.answerBlock}>
-        <div className={styles.blockHeading}>
+        <div className={`${styles.blockHeading} ${styles.blockHeadingWarning}`}>
           <span className={styles.blockQuestion}>In progress but no PR</span>
           <span className={styles.blockCount}>
             {needsPr.length} item{needsPr.length !== 1 ? "s" : ""} — not in current sprint
@@ -260,14 +286,13 @@ export default async function PulsePage() {
               <tr>
                 <th className={styles.colKey}>Ticket</th>
                 <th>Title</th>
-                <th className={styles.colSprint}>Sprint</th>
-                <th className={styles.colPr}>PR</th>
-                <th className={styles.colHeat}>Heat</th>
+                <th className={styles.colStatus}>Status</th>
+                <th className={styles.colAge}>Age</th>
               </tr>
             </thead>
             <tbody>
               {needsPr.map(item => (
-                <TicketRow key={item.jira.id} jira={item.jira} />
+                <TicketRow key={item.jira.id} jira={item.jira} variant="needs-pr" />
               ))}
             </tbody>
           </table>
@@ -276,7 +301,7 @@ export default async function PulsePage() {
 
       {/* ── Section 3: Shadow PRs ── */}
       <section className={styles.answerBlock}>
-        <div className={styles.blockHeading}>
+        <div className={`${styles.blockHeading} ${styles.blockHeadingShadow}`}>
           <span className={styles.blockQuestion}>PRs with no Jira ticket</span>
           <span className={styles.blockCount}>
             {shadowPrs.length} PR{shadowPrs.length !== 1 ? "s" : ""} — work happening outside the plan
@@ -285,34 +310,41 @@ export default async function PulsePage() {
         {shadowPrs.length === 0 ? (
           <p className={styles.blockEmpty}>All PRs reference a Jira ticket.</p>
         ) : (
-          <div>
-            {shadowPrs.map(item => {
-              const { pr } = item
-              return (
-                <div key={pr.id} className={styles.prRow}>
-                  <span className={styles.prRowTitle}>{pr.title}</span>
-                  <span className={styles.prRowMeta}>
-                    {pr.extractedJiraKey ? `Key not found: ${pr.extractedJiraKey}` : "No Jira key in title"}
-                    {" · "}
-                    <HeatCell days={pr.daysStale} />
-                    {pr.externalUrl && (
-                      <>
-                        {" · "}
-                        <a
-                          href={pr.externalUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className={`${styles.prLink} ${styles.prOpen}`}
-                        >
-                          View ↗
-                        </a>
-                      </>
-                    )}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th className={styles.colKey}>PR</th>
+                <th>Title</th>
+                <th className={styles.colReason}>Reason</th>
+                <th className={styles.colAge}>Age</th>
+              </tr>
+            </thead>
+            <tbody>
+              {shadowPrs.map(item => {
+                const { pr } = item
+                const prNum = pr.externalId.match(/#(\d+)$/)?.[1]
+                return (
+                  <tr key={pr.id}>
+                    <td className={styles.colKey}>
+                      <span className={styles.key}>
+                        {pr.externalUrl
+                          ? <a href={pr.externalUrl} target="_blank" rel="noreferrer" className={styles.keyLink}>#{prNum ?? pr.externalId}</a>
+                          : <span>#{prNum ?? pr.externalId}</span>
+                        }
+                      </span>
+                    </td>
+                    <td><div className={styles.titleText}>{pr.title}</div></td>
+                    <td className={styles.colReason}>
+                      <span className={styles.noKeyNote}>
+                        {pr.extractedJiraKey ? `key ${pr.extractedJiraKey} not in DB` : "no Jira key"}
+                      </span>
+                    </td>
+                    <td className={styles.colAge}><HeatCell days={pr.daysStale} /></td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         )}
       </section>
     </div>
