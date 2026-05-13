@@ -1,0 +1,28 @@
+{
+  "id": "d99d4df1-41e8-43e1-8732-42978915e6d6",
+  "schema_version": 2,
+  "timestamp": "2026-05-13T00:00:00.000Z",
+  "topic": "sentinel/standing-gap-map",
+  "decision": "Sentinel is a standing codebase-wide Chronicle coverage map; all modules always appear; risk is derived from coverage % only, never from what changed in the current PR.",
+  "key_insight": "Sentinel is a standing codebase-wide Chronicle coverage map; all modules always appear; risk is derived from coverage % only, never from what changed in the current PR.",
+  "affected_areas": [
+    "scripts/sentinel-pr.ts",
+    "quorum/modules/sentinel/"
+  ],
+  "scope": [
+    "sentinel",
+    "coverage",
+    "tooling"
+  ],
+  "status": "open",
+  "confidence": 0.95,
+  "source_module": "Architect",
+  "evidence_cited": [],
+  "alternatives_considered": [
+    "PR-relative risk scoring (prior behaviour)",
+    "Show only PR-touched modules in the heatmap"
+  ],
+  "rejected_reason": [
+    "PR-relative framing hides gaps in modules not touched by the current PR; the engineer needs a complete picture of where Chronicle knowledge is missing so they can invest in closing gaps over time"
+  ]
+}

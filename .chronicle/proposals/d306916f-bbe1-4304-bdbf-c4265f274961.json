@@ -1,0 +1,30 @@
+{
+  "id": "d306916f-bbe1-4304-bdbf-c4265f274961",
+  "schema_version": 2,
+  "timestamp": "2026-05-13T00:00:00.000Z",
+  "topic": "sentinel/coverage-scanner-extensions",
+  "decision": "Sentinel coverage scanner scans .ts, .tsx, and .yml files; .tsx covers Next.js pages and components, .yml covers GitHub workflow files.",
+  "key_insight": "Sentinel coverage scanner scans .ts, .tsx, and .yml files; .tsx covers Next.js pages and components, .yml covers GitHub workflow files.",
+  "affected_areas": [
+    "scripts/sentinel-pr.ts",
+    "quorum/modules/sentinel/coverage.ts",
+    "app/",
+    "components/",
+    ".github/"
+  ],
+  "scope": [
+    "sentinel",
+    "coverage",
+    "tooling"
+  ],
+  "status": "open",
+  "confidence": 0.95,
+  "source_module": "Architect",
+  "evidence_cited": [],
+  "alternatives_considered": [
+    "Scan .ts only (prior default)"
+  ],
+  "rejected_reason": [
+    "Defaulting to .ts only silently excluded app/ (.tsx), components/ (.tsx), and .github/ (.yml), making three of seven tracked modules invisible in the coverage map"
+  ]
+}

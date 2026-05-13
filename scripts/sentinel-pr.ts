@@ -89,7 +89,7 @@ type ModuleStat = {
 
 async function buildReport(changedFiles: string[]): Promise<string> {
   const [report, allEntries] = await Promise.all([
-    coverage(CHRONICLE_DIR, "."),
+    coverage(CHRONICLE_DIR, ".", { extensions: [".ts", ".tsx", ".yml"] }),
     readCommittedEntries(CHRONICLE_DIR),
   ])
 
@@ -161,8 +161,8 @@ async function buildReport(changedFiles: string[]): Promise<string> {
   lines.push("")
 
   // Coverage table
-  lines.push("| Module | Coverage | Entries | Files | PR Changes | Risk |")
-  lines.push("|--------|----------|---------|-------|------------|------|")
+  lines.push("| Module | Coverage | Entries | Files | Changed in PR | Risk |")
+  lines.push("|--------|----------|---------|-------|---------------|------|")
   for (const stat of allModules) {
     const name = stat.changedFiles > 0 ? `**${stat.name}/**` : `${stat.name}/`
     const changed = stat.changedFiles > 0 ? `**${stat.changedFiles} files**` : "—"

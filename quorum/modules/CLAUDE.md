@@ -78,6 +78,21 @@ The eval suite in `evals/cases/` has `preflight_expects` and `risk_level` assert
 - `CANDIDATE_MULTIPLIER` and `RRF_K` in `oracle/query.ts` — tunable retrieval parameters
 - `evals/cases/` — add new eval cases freely; they run in CI automatically
 
+## When modifying sentinel/coverage.ts
+
+The file-extension list defaults to `[".ts"]`. This is intentionally narrow for portability — but DecisionDeck's scanner must always override it with `[".ts", ".tsx", ".yml"]`:
+
+- `.tsx` — all Next.js pages and components live under `app/` and `components/`
+- `.yml` — GitHub workflow files under `.github/` are tracked application infrastructure
+
+**Never call `coverage()` in `scripts/sentinel-pr.ts` without the extensions override.** Omitting it silently drops `app/`, `components/`, and `.github/` from the coverage map.
+
+The coverage map is a **standing view** of Chronicle knowledge health across the full codebase. All modules in `APP_DIR_PREFIXES` must appear in every run, regardless of what changed in the current PR. Risk is derived from coverage percentage only — not from PR diff size or what files were touched.
+
+If you add a new top-level directory to `APP_DIR_PREFIXES` in `scripts/sentinel-pr.ts`, also add a Chronicle proposal recording why it was added.
+
+---
+
 ## Do not change without strong reason
 
 - The `VectorStore` interface in `oracle/types.ts` — changing it breaks all adapters
