@@ -1,0 +1,31 @@
+{
+  "id": "305c534b-4dea-42be-8b15-6a7ed9962329",
+  "schema_version": 2,
+  "timestamp": "2026-05-13T16:18:50.979Z",
+  "topic": "frontend/styling-strategy",
+  "decision": "CSS Modules are the only styling mechanism in this project; Tailwind, PostCSS configuration, and any utility-class framework are permanently excluded.",
+  "key_insight": "CSS Modules are the only styling mechanism in this project; Tailwind, PostCSS configuration, and any utility-class framework are permanently excluded.",
+  "affected_areas": [
+    "app/",
+    "components/",
+    "next.config.ts"
+  ],
+  "scope": [
+    "frontend",
+    "styling",
+    "css"
+  ],
+  "status": "open",
+  "confidence": 0.9,
+  "source_module": "Architect",
+  "evidence_cited": [],
+  "alternatives_considered": [
+    "Tailwind CSS",
+    "styled-components",
+    "vanilla-extract"
+  ],
+  "rejected_reason": [
+    "Tailwind requires PostCSS config and adds a build-time dependency that conflicts with the local-first, minimal-setup principle",
+    "CSS Modules are built into Next.js with zero config"
+  ]
+}

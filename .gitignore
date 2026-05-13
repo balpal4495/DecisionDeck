@@ -5,6 +5,7 @@ node_modules/
 
 # Build output
 .next/
+next-env.d.ts
 out/
 dist/
 build/
@@ -25,6 +26,9 @@ build/
 # entries/ is a LanceDB binary vector store — do not commit
 .chronicle/entries/
 .chronicle/query-log.jsonl
+# sentinel-baseline.json and sentinel-report.md are generated — do not commit
+.chronicle/sentinel-baseline.json
+sentinel-report.md
 # proposals/ and committed/ are committed to git (source of truth)
 
 # OS
@@ -49,3 +53,4 @@ coverage/
 
 # Docs (work in progress, not part of the committed app)
 DecisionDeck.md
+phases.md

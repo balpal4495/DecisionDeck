@@ -1,0 +1,30 @@
+{
+  "id": "88f9a0f2-c275-49dc-af79-111fe29661e3",
+  "schema_version": 2,
+  "timestamp": "2026-05-13T16:18:51.001Z",
+  "topic": "integrations/jira-sync-strategy",
+  "decision": "Jira integration uses the Jira REST API (read-only), runs as a standalone Node.js script, and uses the Jira issue key (e.g. PROJ-123) as the external ID for idempotent upsert.",
+  "key_insight": "Jira integration uses the Jira REST API (read-only), runs as a standalone Node.js script, and uses the Jira issue key (e.g. PROJ-123) as the external ID for idempotent upsert.",
+  "affected_areas": [
+    "scripts/sync-jira.ts",
+    "db/schema.ts",
+    ".env.local"
+  ],
+  "scope": [
+    "jira",
+    "integrations",
+    "sync"
+  ],
+  "status": "open",
+  "confidence": 0.9,
+  "source_module": "Architect",
+  "evidence_cited": [
+    "5de274f2-4f18-4a8d-87a7-5071be351f25"
+  ],
+  "alternatives_considered": [
+    "Jira CSV export import"
+  ],
+  "rejected_reason": [
+    "CSV export requires manual steps and breaks the automated sync workflow"
+  ]
+}

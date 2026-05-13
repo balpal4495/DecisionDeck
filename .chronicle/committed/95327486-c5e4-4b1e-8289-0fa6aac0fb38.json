@@ -1,0 +1,32 @@
+{
+  "id": "95327486-c5e4-4b1e-8289-0fa6aac0fb38",
+  "schema_version": 2,
+  "timestamp": "2026-05-13T16:18:51.003Z",
+  "topic": "integrations/confluence-sync-strategy",
+  "decision": "Confluence integration indexes page titles, labels, and URLs only; full page content is not stored locally to avoid large storage payloads and PII exposure.",
+  "key_insight": "Confluence integration indexes page titles, labels, and URLs only; full page content is not stored locally to avoid large storage payloads and PII exposure.",
+  "affected_areas": [
+    "scripts/sync-confluence.ts",
+    "db/schema.ts",
+    ".env.local"
+  ],
+  "scope": [
+    "confluence",
+    "integrations",
+    "sync",
+    "privacy"
+  ],
+  "status": "open",
+  "confidence": 0.85,
+  "source_module": "Architect",
+  "evidence_cited": [
+    "5de274f2-4f18-4a8d-87a7-5071be351f25"
+  ],
+  "alternatives_considered": [
+    "Store full Confluence page body for later full-text search"
+  ],
+  "rejected_reason": [
+    "Full page content may include sensitive HR, performance, or commercial data not appropriate for a local SQLite file",
+    "Full-text indexing of Confluence is deferred to Quorum Oracle semantic search in a later phase"
+  ]
+}

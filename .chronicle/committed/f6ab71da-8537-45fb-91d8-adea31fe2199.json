@@ -1,0 +1,33 @@
+{
+  "id": "f6ab71da-8537-45fb-91d8-adea31fe2199",
+  "schema_version": 2,
+  "timestamp": "2026-05-13T16:18:51.005Z",
+  "topic": "product/build-phase-order",
+  "decision": "Data integrations (GitHub, Jira, Confluence) must be built before the Decision Ledger so decisions link to real operational signals from day one.",
+  "key_insight": "Data integrations (GitHub, Jira, Confluence) must be built before the Decision Ledger so decisions link to real operational signals from day one.",
+  "affected_areas": [
+    "phases.md",
+    "app/decisions/",
+    "scripts/sync-github.ts",
+    "scripts/sync-jira.ts",
+    "scripts/sync-confluence.ts"
+  ],
+  "scope": [
+    "architecture",
+    "phases",
+    "integrations",
+    "decisions"
+  ],
+  "status": "open",
+  "confidence": 0.95,
+  "source_module": "Architect",
+  "evidence_cited": [],
+  "alternatives_considered": [
+    "Build Decision Ledger first as the core differentiator",
+    "Build Work Radar first using manual entry"
+  ],
+  "rejected_reason": [
+    "Decision Ledger entries are meaningless without real work items to link to",
+    "Manual entry creates friction that kills adoption before value is demonstrated"
+  ]
+}
