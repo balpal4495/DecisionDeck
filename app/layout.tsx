@@ -38,6 +38,11 @@ export default function RootLayout({
                   Work
                 </NavLink>
               </li>
+              <li className={styles.navItem}>
+                <NavLink href="/triage" className={styles.navLink} activeClassName={styles.navLinkActive}>
+                  Triage
+                </NavLink>
+              </li>
               <div className={styles.navDivider} />
               <li className={styles.navItem}>
                 <NavLink href="/risks" className={styles.navLink} activeClassName={styles.navLinkActive}>
