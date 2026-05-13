@@ -70,10 +70,27 @@ export interface PulseSummary {
 
 // ── Key extraction ────────────────────────────────────────────────────────────
 
-/** Extract Jira issue key from PR title. Returns uppercased key or null. */
+/** Extract Jira issue key from PR title. Returns normalised "DBD-3157" form or null.
+ *
+ * Handles two common formats:
+ *   1. Standard:       "DBD-3157 ..."  or "[DBD-3157]"  (hyphen-separated, any case)
+ *   2. Space-separated: "Dbd 3157 ..."                  (no hyphen, mixed case)
+ *
+ * For the space-separated form we require ≥3 alpha chars and ≥3 digits to
+ * avoid false-matching common English words ("at 12", "in 42", etc.).
+ */
 export function extractJiraKey(title: string): string | null {
-  const match = title.match(/\b([A-Z]{2,10}-\d+)\b/i)
-  return match ? match[1].toUpperCase() : null
+  // 1. Standard hyphen-separated: DBD-3157, dbd-3157, [DBD-3157]
+  const hyphenated = title.match(/\b([A-Z]{2,10})-(\d+)\b/i)
+  if (hyphenated) return `${hyphenated[1].toUpperCase()}-${hyphenated[2]}`
+
+  // 2. Space-separated fallback: "Dbd 3157", "dbd 3157 fix nginx"
+  //    Require ≥3 alpha chars (avoids "at", "in", "by") and 3-6 digits
+  //    (Jira issue numbers; excludes version strings like "Node 20").
+  const spaced = title.match(/\b([A-Z]{3,10})\s(\d{3,6})\b/i)
+  if (spaced) return `${spaced[1].toUpperCase()}-${spaced[2]}`
+
+  return null
 }
 
 // ── Field readers (Jira rawData) ──────────────────────────────────────────────
