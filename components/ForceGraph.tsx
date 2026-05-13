@@ -139,7 +139,7 @@ function SvgNode({ ln, hovered, selected, onEnter, onLeave, onClick }: {
   const bg     = hovered || selected ? "#22263a" : "#1a1d27"
   const stroke = selected ? accent : hovered ? "#4b5563" : "#2e3350"
   const alpha  = selected || hovered ? 1 : linked ? 0.9 : 0.42
-  const sub    = node.assignee ?? (node.nodeType === "pr" ? "shadow PR" : "unassigned")
+  const sub    = node.assignee ?? (node.nodeType === "pr" ? (linked ? "open PR" : "shadow PR") : "unassigned")
   const subTxt = sub.length > 23 ? sub.slice(0, 22) + "…" : sub
 
   return (
