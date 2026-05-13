@@ -1,0 +1,34 @@
+{
+  "id": "901812db-e1f3-4620-a874-49d325f47eef",
+  "schema_version": 2,
+  "timestamp": "2026-05-13T16:18:51.002Z",
+  "topic": "data/storage-strategy",
+  "decision": "SQLite with Drizzle ORM is the sole data store; no cloud database or SaaS backend is required to run DecisionDeck.",
+  "key_insight": "SQLite with Drizzle ORM is the sole data store; no cloud database or SaaS backend is required to run DecisionDeck.",
+  "affected_areas": [
+    "db/schema.ts",
+    "db/migrations/",
+    "lib/db.ts",
+    "package.json"
+  ],
+  "scope": [
+    "data",
+    "storage",
+    "local-first",
+    "drizzle"
+  ],
+  "status": "open",
+  "confidence": 0.95,
+  "source_module": "Architect",
+  "evidence_cited": [],
+  "alternatives_considered": [
+    "PostgreSQL with a local Docker container",
+    "Prisma ORM with SQLite",
+    "PlanetScale or Supabase"
+  ],
+  "rejected_reason": [
+    "Docker adds setup overhead that violates local-first, no-prereqs principle",
+    "Cloud databases require credentials and network access, breaking local-first",
+    "Drizzle provides lighter-weight type-safe SQLite access than Prisma for this use case"
+  ]
+}

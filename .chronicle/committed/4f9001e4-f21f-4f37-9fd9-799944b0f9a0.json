@@ -1,0 +1,31 @@
+{
+  "id": "4f9001e4-f21f-4f37-9fd9-799944b0f9a0",
+  "schema_version": 2,
+  "timestamp": "2026-05-13T16:18:50.984Z",
+  "topic": "product/anti-features-individual-metrics",
+  "decision": "Individual engineer metrics (commit counts, PR counts, review speed per person, lines of code) are permanently excluded from DecisionDeck with no exceptions without an explicit superseding decision.",
+  "key_insight": "Individual engineer metrics (commit counts, PR counts, review speed per person, lines of code) are permanently excluded from DecisionDeck with no exceptions without an explicit superseding decision.",
+  "affected_areas": [
+    "app/",
+    "lib/report-generator.ts",
+    "db/schema.ts",
+    "scripts/"
+  ],
+  "scope": [
+    "product",
+    "anti-features",
+    "ethics",
+    "reporting"
+  ],
+  "status": "open",
+  "confidence": 1,
+  "source_module": "Architect",
+  "evidence_cited": [],
+  "alternatives_considered": [
+    "Show per-engineer PR counts as an optional opt-in metric"
+  ],
+  "rejected_reason": [
+    "Individual metrics are easily misused for performance judgments based on weak signals",
+    "Contradicts the product principle: DecisionDeck improves systems, not scores individuals"
+  ]
+}

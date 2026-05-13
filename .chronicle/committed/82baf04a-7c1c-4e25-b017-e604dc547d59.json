@@ -1,0 +1,31 @@
+{
+  "id": "82baf04a-7c1c-4e25-b017-e604dc547d59",
+  "schema_version": 2,
+  "timestamp": "2026-05-13T16:18:51.000Z",
+  "topic": "integrations/github-sync-strategy",
+  "decision": "GitHub data is pulled read-only via `gh api` CLI, supports GitHub Enterprise via GH_HOST, and runs as a standalone Node.js script — not inside the Next.js server.",
+  "key_insight": "GitHub data is pulled read-only via `gh api` CLI, supports GitHub Enterprise via GH_HOST, and runs as a standalone Node.js script — not inside the Next.js server.",
+  "affected_areas": [
+    "scripts/sync-github.ts",
+    "package.json",
+    ".env.local"
+  ],
+  "scope": [
+    "github",
+    "integrations",
+    "sync",
+    "enterprise"
+  ],
+  "status": "open",
+  "confidence": 0.95,
+  "source_module": "Architect",
+  "evidence_cited": [],
+  "alternatives_considered": [
+    "GitHub REST API called directly from Next.js API routes",
+    "GitHub App OAuth for organization-wide install"
+  ],
+  "rejected_reason": [
+    "API routes running sync would make the web server stateful and slow",
+    "Organization-wide install violates the local-first, no-setup-required principle"
+  ]
+}

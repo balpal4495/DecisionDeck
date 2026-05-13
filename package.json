@@ -4,15 +4,41 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:generate": "drizzle-kit generate --out db/migrations --schema db/schema.ts --dialect sqlite",
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx db/seed.ts",
+    "sync:github": "tsx scripts/sync-github.ts",
+    "chronicle:commit": "tsx scripts/chronicle-commit-all.ts",
+    "sentinel:check": "tsx scripts/sentinel-check.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "zod": "^3.23.0"
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.7.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "better-sqlite3": "^12.10.0",
+    "drizzle-orm": "^0.45.2",
+    "next": "^16.2.6",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "typescript": "^6.0.3",
+    "zod": "^3.25.76"
   },
   "optionalDependencies": {
-    "vectordb": "^0.4.0",
-    "@xenova/transformers": "^2.17.0"
+    "@xenova/transformers": "^2.17.0",
+    "vectordb": "^0.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.1",
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.21.0",
+    "vitest": "^4.1.6"
   }
 }

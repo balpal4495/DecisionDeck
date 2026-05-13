@@ -1,0 +1,30 @@
+{
+  "id": "5de274f2-4f18-4a8d-87a7-5071be351f25",
+  "schema_version": 2,
+  "timestamp": "2026-05-13T16:18:50.996Z",
+  "topic": "integrations/sync-script-pattern",
+  "decision": "All data sync commands (GitHub, Jira, Confluence) run as standalone Node.js scripts invoked via `npm run sync:*`; they write to SQLite directly and do not run inside the Next.js server process.",
+  "key_insight": "All data sync commands (GitHub, Jira, Confluence) run as standalone Node.js scripts invoked via `npm run sync:*`; they write to SQLite directly and do not run inside the Next.js server process.",
+  "affected_areas": [
+    "scripts/",
+    "package.json",
+    "lib/db.ts"
+  ],
+  "scope": [
+    "integrations",
+    "sync",
+    "architecture"
+  ],
+  "status": "open",
+  "confidence": 0.95,
+  "source_module": "Architect",
+  "evidence_cited": [
+    "82baf04a-7c1c-4e25-b017-e604dc547d59"
+  ],
+  "alternatives_considered": [
+    "API route at /api/sync that triggers the import inline"
+  ],
+  "rejected_reason": [
+    "Inline sync inside a web request ties HTTP timeout limits to potentially long import operations"
+  ]
+}
