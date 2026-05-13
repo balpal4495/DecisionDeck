@@ -36,6 +36,8 @@ export interface PulseJira {
   storyPoints: number | null
   assignee: string | null
   daysStale: number
+  /** True when the Jira issuetype name is "Sub-task" */
+  isSubtask: boolean
 }
 
 export interface PulsePr {
@@ -68,10 +70,27 @@ export interface PulseSummary {
 
 // ── Key extraction ────────────────────────────────────────────────────────────
 
-/** Extract Jira issue key from PR title. Returns uppercased key or null. */
+/** Extract Jira issue key from PR title. Returns normalised "DBD-3157" form or null.
+ *
+ * Handles two common formats:
+ *   1. Standard:       "DBD-3157 ..."  or "[DBD-3157]"  (hyphen-separated, any case)
+ *   2. Space-separated: "Dbd 3157 ..."                  (no hyphen, mixed case)
+ *
+ * For the space-separated form we require ≥3 alpha chars and ≥3 digits to
+ * avoid false-matching common English words ("at 12", "in 42", etc.).
+ */
 export function extractJiraKey(title: string): string | null {
-  const match = title.match(/\b([A-Z]{2,10}-\d+)\b/i)
-  return match ? match[1].toUpperCase() : null
+  // 1. Standard hyphen-separated: DBD-3157, dbd-3157, [DBD-3157]
+  const hyphenated = title.match(/\b([A-Z]{2,10})-(\d+)\b/i)
+  if (hyphenated) return `${hyphenated[1].toUpperCase()}-${hyphenated[2]}`
+
+  // 2. Space-separated fallback: "Dbd 3157", "dbd 3157 fix nginx"
+  //    Require ≥3 alpha chars (avoids "at", "in", "by") and 3-6 digits
+  //    (Jira issue numbers; excludes version strings like "Node 20").
+  const spaced = title.match(/\b([A-Z]{3,10})\s(\d{3,6})\b/i)
+  if (spaced) return `${spaced[1].toUpperCase()}-${spaced[2]}`
+
+  return null
 }
 
 // ── Field readers (Jira rawData) ──────────────────────────────────────────────
@@ -101,6 +120,20 @@ function readJiraFields(rawData: string | null): JiraFields {
   } catch {
     return { sprint: null, sprintState: null, storyPoints: null, assignee: null, updated: null }
   }
+}
+
+function readIssuetypeName(rawData: string | null): string {
+  if (!rawData) return ""
+  try {
+    const p = JSON.parse(rawData) as Record<string, unknown>
+    const f = (p.fields ?? {}) as Record<string, unknown>
+    return ((f.issuetype as Record<string, unknown>)?.name as string ?? "").toLowerCase()
+  } catch { return "" }
+}
+
+function isSubtaskItem(rawData: string | null): boolean {
+  const t = readIssuetypeName(rawData)
+  return t === "sub-task" || t === "subtask"
 }
 
 function daysAgo(isoDate: string | null, fallback = -1): number {
@@ -182,8 +215,7 @@ export function buildPulse(allItems: WorkItem[]): PulseItem[] {
           sprintState: jiraFields.sprintState,
           storyPoints: jiraFields.storyPoints,
           assignee: jiraFields.assignee,
-          daysStale: jiraDays,
-        },
+          daysStale: jiraDays,          isSubtask: isSubtaskItem(jiraItem.rawData ?? null),        },
         pr: prRecord,
         staleDays: isFinite(staleDays) ? staleDays : -1,
       })
@@ -219,6 +251,7 @@ export function buildPulse(allItems: WorkItem[]): PulseItem[] {
       storyPoints: jiraFields.storyPoints,
       assignee: jiraFields.assignee,
       daysStale: jiraDays,
+      isSubtask: isSubtaskItem(item.rawData ?? null),
     }
 
     if (workClass === "zombie") {

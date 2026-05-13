@@ -48,6 +48,11 @@ export default function RootLayout({
                   Pulse
                 </NavLink>
               </li>
+              <li className={styles.navItem}>
+                <NavLink href="/graph" className={styles.navLink} activeClassName={styles.navLinkActive}>
+                  Alignment
+                </NavLink>
+              </li>
               <div className={styles.navDivider} />
               <li className={styles.navItem}>
                 <NavLink href="/risks" className={styles.navLink} activeClassName={styles.navLinkActive}>

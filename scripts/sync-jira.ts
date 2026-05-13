@@ -388,7 +388,7 @@ async function main() {
       ticketsRaw = await searchJira(
         host,
         auth,
-        `issuetype in (Story,Task,Bug,Subtask) AND project = "${project}" AND statusCategory != Done ORDER BY created DESC`,
+        `issuetype NOT IN (Epic) AND project = "${project}" AND statusCategory != Done ORDER BY created DESC`,
         fields,
       )
     } catch (err) {
@@ -404,6 +404,52 @@ async function main() {
       else updated++
     }
     console.log(`  ✓ ${tickets.length} tickets processed`)
+
+    // ── Backfill: fetch Done tickets referenced by open GitHub PRs ────────────
+    // Our main JQL excludes statusCategory=Done, but a PR may reference a ticket
+    // that was closed before the PR merged. Without this pass those PRs show as
+    // "orphan" in the PR Coverage view even though the ticket exists.
+    const ghPrs = sqlite
+      .prepare("SELECT title FROM work_items WHERE source='github'")
+      .all() as { title: string | null }[]
+
+    const syncedIds = new Set(
+      (sqlite.prepare("SELECT external_id FROM work_items WHERE source='jira'").all() as { external_id: string }[])
+        .map(r => r.external_id.toUpperCase())
+    )
+
+    const missingKeys: string[] = []
+    const keyPattern = /\b([A-Z]{2,10}-\d+)\b/gi
+    for (const { title } of ghPrs) {
+      if (!title) continue
+      for (const match of title.matchAll(keyPattern)) {
+        const key = match[1].toUpperCase()
+        if (key.startsWith(`${project.toUpperCase()}-`) && !syncedIds.has(key)) {
+          missingKeys.push(key)
+        }
+      }
+    }
+
+    if (missingKeys.length > 0) {
+      const uniqueMissing = [...new Set(missingKeys)]
+      console.log(`  Backfilling ${uniqueMissing.length} PR-referenced ticket(s) not yet in DB: ${uniqueMissing.join(", ")}`)
+      const backfillJql = `issueKey in (${uniqueMissing.map(k => `"${k}"`).join(",")}) ORDER BY key ASC`
+      let backfillRaw: unknown[]
+      try {
+        backfillRaw = await searchJira(host, auth, backfillJql, fields)
+      } catch (err) {
+        console.warn(`  ⚠  Backfill fetch failed:`, err instanceof Error ? err.message : err)
+        backfillRaw = []
+      }
+      const backfilled = z.array(JiraIssueSchema).parse(backfillRaw)
+      for (const issue of backfilled) {
+        const item = toWorkItem(issue, now)
+        const result = await upsertWorkItem(db, item)
+        if (result === "inserted") inserted++
+        else updated++
+      }
+      console.log(`  ✓ ${backfilled.length} PR-referenced ticket(s) backfilled`)
+    }
   }
 
   console.log(`\nSync complete. ${inserted} inserted, ${updated} updated.`)
