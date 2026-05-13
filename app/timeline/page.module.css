@@ -1,21 +1,7 @@
 .page {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: var(--space-8) var(--space-6);
-}
-
-.header {
-  margin-bottom: var(--space-6);
-}
-
-.title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-text);
-  margin-bottom: var(--space-2);
-}
-
-.subtitle {
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 56px); /* full height minus nav */
+  overflow: hidden;
+  padding: 0;
 }
