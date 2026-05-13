@@ -53,6 +53,11 @@ export default function RootLayout({
                   Alignment
                 </NavLink>
               </li>
+              <li className={styles.navItem}>
+                <NavLink href="/timeline" className={styles.navLink} activeClassName={styles.navLinkActive}>
+                  Timeline
+                </NavLink>
+              </li>
               <div className={styles.navDivider} />
               <li className={styles.navItem}>
                 <NavLink href="/risks" className={styles.navLink} activeClassName={styles.navLinkActive}>
