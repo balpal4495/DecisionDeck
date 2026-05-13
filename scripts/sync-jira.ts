@@ -161,6 +161,21 @@ const JiraIssueLinkSchema: z.ZodType<JiraIssueLink> = z.object({
     .optional(),
 })
 
+const JiraSprintSchema = z.object({
+  id: z.number().optional(),
+  name: z.string().optional(),
+  state: z.string().optional(),
+}).passthrough()
+
+const JiraSubtaskSchema = z.object({
+  key: z.string(),
+  fields: z.object({
+    summary: z.string().optional(),
+    status: z.object({ name: z.string() }).optional(),
+    issuetype: z.object({ name: z.string() }).optional(),
+  }).optional(),
+}).passthrough()
+
 const JiraIssueSchema = z.object({
   key: z.string(),
   fields: z.object({
@@ -181,10 +196,22 @@ const JiraIssueSchema = z.object({
       .object({ displayName: z.string(), emailAddress: z.string().optional() })
       .optional()
       .nullable(),
+    reporter: z
+      .object({ displayName: z.string(), emailAddress: z.string().optional() })
+      .optional()
+      .nullable(),
     issuelinks: z.array(JiraIssueLinkSchema).optional().default([]),
+    parent: z
+      .object({ key: z.string(), fields: z.object({ summary: z.string().optional(), issuetype: z.object({ name: z.string() }).optional() }).optional() })
+      .optional()
+      .nullable(),
+    subtasks: z.array(JiraSubtaskSchema).optional().default([]),
+    customfield_10007: z.union([z.array(JiraSprintSchema), z.null()]).optional(),
+    customfield_10005: z.union([z.number(), z.null()]).optional(),
+    customfield_11725: z.union([z.number(), z.null()]).optional(),
     created: z.string(),
     updated: z.string(),
-  }),
+  }).passthrough(),
 })
 
 const JiraSearchPageSchema = z.object({
@@ -315,7 +342,13 @@ async function main() {
     "priority",
     "labels",
     "assignee",
+    "reporter",
     "issuelinks",
+    "parent",
+    "subtasks",
+    "customfield_10007",
+    "customfield_10005",
+    "customfield_11725",
     "created",
     "updated",
   ]
