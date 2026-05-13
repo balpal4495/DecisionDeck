@@ -16,6 +16,7 @@ Load these skills when the relevant task arises:
 - `#nextjs-api-routes` — route handler conventions, error shapes, HTTP method handling
 - `#importer-pattern` — parse → preview → user-confirm → save pipeline
 - `#zod-validation` — Zod at every API boundary and all structured LLM output
+- `#sentinel-coverage` — modifying scripts/sentinel-pr.ts or quorum/modules/sentinel/
 
 ## Responsibilities
 
@@ -24,6 +25,7 @@ Load these skills when the relevant task arises:
 - `lib/quorum/prompts.ts` — prompt shape builders for review-decision and review-report
 - `lib/quorum/review-decision.ts` and `lib/quorum/review-report.ts`
 - `app/api/import/**` — Phase 9 importer route handlers
+- `scripts/sentinel-pr.ts` — Sentinel Chronicle coverage map (load `#sentinel-coverage` skill)
 - Zod schemas for all API request bodies
 
 ## Constraints
