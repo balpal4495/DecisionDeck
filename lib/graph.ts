@@ -280,7 +280,7 @@ export function buildPRCoverage(rawItems: WorkItem[], pulse: PulseItem[]): PRCov
       signalNote = `Key ${extractedKey} belongs to another project`
     } else if (!jiraItem) {
       signal     = "orphan"
-      signalNote = `${extractedKey} not found in synced tickets`
+      signalNote = `${extractedKey} not in sync — ticket may be Done/resolved (our JQL excludes statusCategory=Done) or an unsynced issue type`
     } else if (pr.status === "open" && jiraGH?.prState === "MERGED") {
       signal     = "superseded"
       signalNote = `Jira reports ${jiraGH.prCount} merged PR(s) on this ticket — this PR may be redundant`
