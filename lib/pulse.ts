@@ -36,6 +36,8 @@ export interface PulseJira {
   storyPoints: number | null
   assignee: string | null
   daysStale: number
+  /** True when the Jira issuetype name is "Sub-task" */
+  isSubtask: boolean
 }
 
 export interface PulsePr {
@@ -101,6 +103,20 @@ function readJiraFields(rawData: string | null): JiraFields {
   } catch {
     return { sprint: null, sprintState: null, storyPoints: null, assignee: null, updated: null }
   }
+}
+
+function readIssuetypeName(rawData: string | null): string {
+  if (!rawData) return ""
+  try {
+    const p = JSON.parse(rawData) as Record<string, unknown>
+    const f = (p.fields ?? {}) as Record<string, unknown>
+    return ((f.issuetype as Record<string, unknown>)?.name as string ?? "").toLowerCase()
+  } catch { return "" }
+}
+
+function isSubtaskItem(rawData: string | null): boolean {
+  const t = readIssuetypeName(rawData)
+  return t === "sub-task" || t === "subtask"
 }
 
 function daysAgo(isoDate: string | null, fallback = -1): number {
@@ -182,8 +198,7 @@ export function buildPulse(allItems: WorkItem[]): PulseItem[] {
           sprintState: jiraFields.sprintState,
           storyPoints: jiraFields.storyPoints,
           assignee: jiraFields.assignee,
-          daysStale: jiraDays,
-        },
+          daysStale: jiraDays,          isSubtask: isSubtaskItem(jiraItem.rawData ?? null),        },
         pr: prRecord,
         staleDays: isFinite(staleDays) ? staleDays : -1,
       })
@@ -219,6 +234,7 @@ export function buildPulse(allItems: WorkItem[]): PulseItem[] {
       storyPoints: jiraFields.storyPoints,
       assignee: jiraFields.assignee,
       daysStale: jiraDays,
+      isSubtask: isSubtaskItem(item.rawData ?? null),
     }
 
     if (workClass === "zombie") {

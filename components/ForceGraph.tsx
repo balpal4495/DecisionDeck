@@ -77,10 +77,16 @@ function buildLayout(data: GraphData, width: number): Layout {
     linkedPr.add(l.target as string)
   }
 
-  const relevant = jiraNds.filter(n =>
-    linkedJira.has(n.id) || n.sprintState === "active" ||
-    n.workClass === "deliverable" || n.workClass === "zombie"
-  )
+  const relevant = jiraNds.filter(n => {
+    // Always include nodes that have a linked PR
+    if (linkedJira.has(n.id)) return true
+    // Exclude unlinked sub-tasks — they are too granular for the alignment view.
+    // Now that 600+ tickets are synced (many are Sub-tasks), unlinked sub-tasks
+    // would flood the left column. Only show them when they have a matched PR.
+    if (n.isSubtask) return false
+    return n.sprintState === "active" ||
+      n.workClass === "deliverable" || n.workClass === "zombie"
+  })
   relevant.sort((a, b) => {
     const aLnk = linkedJira.has(a.id) ? 0 : 1
     const bLnk = linkedJira.has(b.id) ? 0 : 1
@@ -367,6 +373,17 @@ function CoverageRow({ row }: { row: PRCoverageRow }) {
                 {row.jiraFound && <>
                   <span className={styles.covExpandLabel}>Ticket status</span>
                   <span>{row.jiraStatus} · {row.jiraWorkClass} · {row.jiraAssignee ?? "unassigned"}</span>
+                </>}
+
+                {row.jiraIsSubtask && row.jiraParentKey && <>
+                  <span className={styles.covExpandLabel}>Parent story</span>
+                  <span>
+                    {row.jiraUrl
+                      ? <a href={row.jiraUrl.replace(/\/browse\/.*$/, `/browse/${row.jiraParentKey}`)} target="_blank" rel="noreferrer" className={styles.openLink}>{row.jiraParentKey}</a>
+                      : <span className={styles.keyBadge}>{row.jiraParentKey}</span>
+                    }
+                    {" "}{row.jiraParentTitle}
+                  </span>
                 </>}
 
                 {row.jiraGH && <>

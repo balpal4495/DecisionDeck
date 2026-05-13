@@ -34,6 +34,8 @@ export interface GraphNode {
   daysStale: number
   externalUrl: string | null
   pulseState: PulseState
+  /** True when the Jira issuetype is Sub-task — used to suppress unlinked sub-tasks from alignment view */
+  isSubtask: boolean
 }
 
 export interface GraphLink {
@@ -78,6 +80,7 @@ export function buildGraphData(items: PulseItem[]): GraphData {
         daysStale: j.daysStale,
         externalUrl: j.externalUrl,
         pulseState: item.state,
+        isSubtask: j.isSubtask,
       })
     }
 
@@ -98,6 +101,7 @@ export function buildGraphData(items: PulseItem[]): GraphData {
         daysStale: p.daysStale,
         externalUrl: p.externalUrl,
         pulseState: item.state,
+        isSubtask: false,
       })
     }
 
@@ -226,6 +230,12 @@ export interface PRCoverageRow {
   // the GitHub app, regardless of whether they're in our sync'd DB.
   jiraGH: JiraGitHubActivity | null
 
+  // ── Sub-task context ──────────────────────────────────────────────────────
+  // When the Jira ticket is a Sub-task, surface the parent story for context.
+  jiraIsSubtask: boolean
+  jiraParentKey: string | null
+  jiraParentTitle: string | null
+
   // ── Assessment ────────────────────────────────────────────────────────────
   signal: PRSignal
   signalNote: string
@@ -238,6 +248,29 @@ function ghPrDaysOld(rawData: string | null): number {
     const updated = p.updated_at as string | null
     return updated ? Math.floor((Date.now() - new Date(updated).getTime()) / 86_400_000) : -1
   } catch { return -1 }
+}
+
+function readJiraParent(rawData: string | null): { key: string; title: string } | null {
+  if (!rawData) return null
+  try {
+    const p = JSON.parse(rawData) as Record<string, unknown>
+    const f = (p.fields ?? {}) as Record<string, unknown>
+    const parent = f.parent as Record<string, unknown> | null
+    if (!parent) return null
+    const key = parent.key as string | null
+    const summary = ((parent.fields as Record<string, unknown>)?.summary as string | null)
+      ?? (parent.summary as string | null)
+    return key ? { key, title: summary ?? key } : null
+  } catch { return null }
+}
+
+function readIssuetype(rawData: string | null): string {
+  if (!rawData) return ""
+  try {
+    const p = JSON.parse(rawData) as Record<string, unknown>
+    const f = (p.fields ?? {}) as Record<string, unknown>
+    return ((f.issuetype as Record<string, unknown>)?.name as string ?? "").toLowerCase()
+  } catch { return "" }
 }
 
 export function buildPRCoverage(rawItems: WorkItem[], pulse: PulseItem[]): PRCoverageRow[] {
@@ -267,6 +300,9 @@ export function buildPRCoverage(rawItems: WorkItem[], pulse: PulseItem[]): PRCov
     const jiraItem = extractedKey ? jiraByKey.get(extractedKey.toUpperCase()) ?? null : null
     const pj       = extractedKey ? pulseJiraByKey.get(extractedKey.toUpperCase()) ?? null : null
     const jiraGH   = jiraItem ? parseJiraGitHub(jiraItem.rawData ?? null) : null
+    const parent   = jiraItem ? readJiraParent(jiraItem.rawData ?? null) : null
+    const issuetype = jiraItem ? readIssuetype(jiraItem.rawData ?? null) : ""
+    const jiraIsSubtask = issuetype === "sub-task" || issuetype === "subtask"
 
     // ── Signal classification ─────────────────────────────────────────────
     let signal: PRSignal
@@ -289,7 +325,9 @@ export function buildPRCoverage(rawItems: WorkItem[], pulse: PulseItem[]): PRCov
       signalNote = `PR has been open ${prDaysOld}d — ticket is still ${jiraItem.status}`
     } else {
       signal     = "matched"
-      signalNote = pj?.sprint ? `Active in sprint ${pj.sprint}` : "Matched to Jira ticket"
+      signalNote = jiraIsSubtask && parent
+        ? `Sub-task of ${parent.key} · ${pj?.sprint ? `sprint ${pj.sprint}` : "no sprint"}`
+        : pj?.sprint ? `Active in sprint ${pj.sprint}` : "Matched to Jira ticket"
     }
 
     rows.push({
@@ -309,6 +347,9 @@ export function buildPRCoverage(rawItems: WorkItem[], pulse: PulseItem[]): PRCov
       jiraAssignee:  pj?.assignee ?? null,
       jiraUrl:       jiraItem?.externalUrl ?? null,
       jiraGH,
+      jiraIsSubtask,
+      jiraParentKey:   parent?.key ?? null,
+      jiraParentTitle: parent?.title ?? null,
       signal,
       signalNote,
     })

@@ -199,7 +199,18 @@ export function classifyWorkClass(item: WorkItem): WorkClassResult {
   const subtasks = (fields.subtasks as unknown[]) ?? []
   const hasSubtasks = subtasks.length > 0
 
-  // 1. Structural containers — issuetype or subtasks
+  // 1a. Sub-tasks — atomic work units. They don't carry sprint data themselves
+  //     (inherited from the parent story), so the planning-signal checks below
+  //     would incorrectly classify them as zombie/placeholder.
+  //     Rule: in-progress sub-task = deliverable; anything else = planned.
+  if (issuetype === "sub-task" || issuetype === "subtask") {
+    if (item.status === "in_progress" || item.status === "in_review") {
+      return { workClass: "deliverable", reason: "Sub-task actively in progress — tracked under parent story" }
+    }
+    return { workClass: "planned", reason: "Sub-task — scheduled under parent story" }
+  }
+
+  // 1b. Structural containers — issuetype or subtasks
   if (issuetype.includes("epic") || issuetype === "initiative" || issuetype === "feature") {
     return { workClass: "container", reason: `Issue type is ${issuetype}` }
   }
