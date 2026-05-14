@@ -1,0 +1,30 @@
+{
+  "id": "4a2fcd7e-eb5f-448c-b6ca-41df07647f4f",
+  "schema_version": 2,
+  "timestamp": "2026-05-13T21:55:56.192Z",
+  "topic": "data-sync/jira-issuetype-filter",
+  "decision": "Jira sync must use `issuetype NOT IN (Epic)` instead of an explicit whitelist, and include a PR-key backfill pass for tickets absent from the main sweep.",
+  "key_insight": "Jira instance-specific type names silently break whitelist JQL filters — this instance uses 'Sub-task' (hyphenated) not 'Subtask' (one word). Exclusion patterns are future-proof; enumeration is fragile. A post-sync backfill pass is also required to catch Done tickets and edge-case types still referenced by open PRs.",
+  "affected_areas": [
+    "scripts/sync-jira.ts",
+    "lib/graph.ts"
+  ],
+  "scope": [
+    "sync",
+    "jira",
+    "pr-coverage",
+    "data-quality"
+  ],
+  "status": "open",
+  "confidence": 0.97,
+  "source_module": "DataEngineer",
+  "evidence_cited": [],
+  "alternatives_considered": [
+    "Keep whitelist and add 'Sub-task' to it",
+    "Accept orphan false-positives as noise in PR Coverage"
+  ],
+  "rejected_reason": [
+    "Whitelist addition is brittle — will break again on any future non-standard issuetype; exclusion is future-proof",
+    "False orphan signals erode trust in the PR Coverage view — users stop acting on signals they know are unreliable"
+  ]
+}

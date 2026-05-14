@@ -1,0 +1,293 @@
+/* ── Wrapper fills available page height ──────────────────────────────────── */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  position: relative;
+  background: var(--color-bg);
+}
+
+/* ── Top controls bar ────────────────────────────────────────────────────────── */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.btn:hover {
+  background: color-mix(in srgb, var(--color-surface-raised) 70%, var(--color-accent) 30%);
+  border-color: var(--color-accent);
+}
+
+.hint {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  flex: 1;
+  text-align: center;
+}
+
+.stats {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+/* ── Canvas area ──────────────────────────────────────────────────────────── */
+
+.canvas {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.canvas > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ── Tooltip ──────────────────────────────────────────────────────────────── */
+
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  max-width: 280px;
+  z-index: 10;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.ttType {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.ttTitle {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.35;
+  margin-bottom: 0.25rem;
+  word-break: break-word;
+}
+
+.ttStatus {
+  font-size: 0.72rem;
+  color: var(--color-accent);
+  margin-bottom: 0.15rem;
+}
+
+.ttMeta {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.1rem;
+}
+
+.ttStale {
+  color: var(--color-warning);
+}
+
+.ttHint {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  margin-top: 0.35rem;
+  opacity: 0.75;
+}
+
+/* ── Detail panel (right side) ────────────────────────────────────────────── */
+
+.panel {
+  position: absolute;
+  top: 48px;
+  right: 16px;
+  width: 260px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1rem;
+  z-index: 20;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.panelTypePill {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  color: var(--color-text);
+}
+
+.panelClose {
+  font-size: 0.8rem;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  line-height: 1;
+}
+
+.panelClose:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
+.panelTitle {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  word-break: break-word;
+}
+
+.panelStatus {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  display: inline-block;
+  margin-bottom: 0.75rem;
+}
+
+.psInProgress { background: color-mix(in srgb, #6d7bff 20%, transparent); color: #6d7bff; }
+.psInReview   { background: color-mix(in srgb, #ffaf41 20%, transparent); color: #ffaf41; }
+.psDone       { background: color-mix(in srgb, #4bc35a 20%, transparent); color: #4bc35a; }
+.psBlocked    { background: color-mix(in srgb, #ff4b55 20%, transparent); color: #ff4b55; }
+.psTodo       { background: color-mix(in srgb, #8b90a8 12%, transparent); color: #8b90a8; }
+
+.panelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  padding: 0.2rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent);
+}
+
+.panelRow:last-of-type {
+  border-bottom: none;
+}
+
+.panelRow span:last-child {
+  color: var(--color-text);
+  text-align: right;
+}
+
+.panelLink {
+  display: block;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  text-decoration: none;
+  text-align: center;
+  padding: 0.4rem;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  transition: background 0.12s;
+}
+
+.panelLink:hover {
+  background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+}
+
+/* ── Legend (bottom-left corner) ─────────────────────────────────────────── */
+
+.legend {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  gap: 1rem;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+}
+
+.legendGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.legendHeading {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.2rem;
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendRing {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  flex-shrink: 0;
+}
+
+.legendDivider {
+  width: 1px;
+  background: var(--color-border);
+  align-self: stretch;
+}

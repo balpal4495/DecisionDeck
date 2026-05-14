@@ -23,6 +23,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@deck.gl/core": "^9.3.2",
+    "@deck.gl/layers": "^9.3.2",
+    "@deck.gl/react": "^9.3.2",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.7.0",
     "@types/react": "^19.2.14",
