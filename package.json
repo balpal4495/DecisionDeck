@@ -48,6 +48,6 @@
     "drizzle-kit": "^0.31.10",
     "tsx": "^4.21.0",
     "vitest": "^4.1.6",
-    "@balpal4495/quorum": "^2.0.0"
+    "@balpal4495/quorum": "^3.0.0"
   }
 }
