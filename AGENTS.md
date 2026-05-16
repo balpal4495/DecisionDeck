@@ -66,3 +66,10 @@ All skills live in `.github/skills/<name>/SKILL.md`.
 | [decision-matching](.github/skills/decision-matching/SKILL.md) | Find Relevant Decisions feature |
 | [phase-scoping](.github/skills/phase-scoping/SKILL.md) | Phase boundaries and non-goals |
 
+
+<!-- quorum:start -->
+## Quorum
+
+See [quorum/AGENTS.md](quorum/AGENTS.md) for module file ownership and internals.
+See [.github/copilot-instructions.md](.github/copilot-instructions.md) for workflow rules.
+<!-- quorum:end -->

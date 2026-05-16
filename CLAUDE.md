@@ -65,3 +65,33 @@ source ~/.zshrc && gemini -p "I'm about to change X. What should I watch out for
 
 You reason about Gemini's output — it assists, you decide. Never pass its response to the
 user unfiltered. If Gemini contradicts what you know from reading the code, trust your reading.
+
+<!-- quorum:start -->
+## Quorum
+
+See [quorum/CLAUDE.md](quorum/CLAUDE.md) for design decisions and invariants.
+See [.github/copilot-instructions.md](.github/copilot-instructions.md) for workflow rules.
+
+## Gemini CLI (optional assistant)
+
+Before attempting any Gemini call, check availability:
+
+```bash
+which gemini 2>/dev/null
+```
+
+If the command returns empty, skip this section entirely. The project is fully functional
+without Gemini. Never try to install it or ask the user to install it mid-task.
+
+If Gemini is available, use it as a large-context assistant for tasks that require
+surveying many files at once — it can hold the entire codebase in a single context window.
+
+```bash
+# The Bash tool does not auto-source shell profiles — always prefix with source:
+source ~/.zshrc && gemini -p "Summarise the public API across all modules"
+source ~/.zshrc && gemini -p "I'm about to change X. What should I watch out for?"
+```
+
+You reason about Gemini's output — it assists, you decide. Never pass its response to the
+user unfiltered. If Gemini contradicts what you know from reading the code, trust your reading.
+<!-- quorum:end -->
