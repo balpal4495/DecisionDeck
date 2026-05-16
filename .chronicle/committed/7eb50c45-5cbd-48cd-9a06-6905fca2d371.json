@@ -1,6 +1,6 @@
 {
-  "id": "4c2e8a7f-1c26-490b-a0f9-e75ee5f6e484",
-  "timestamp": "2026-05-13T23:54:58.045Z",
+  "id": "7eb50c45-5cbd-48cd-9a06-6905fca2d371",
+  "timestamp": "2026-05-16T20:15:47.787Z",
   "schema_version": 2,
   "topic": "product/feature",
   "decision": "Replace accordion drop-down delivery view with a WebGL node graph rendered via deck.gl (OrthographicView + ScatterplotLayer + PathLayer + TextLayer), surfacing Epic→Sprint→Story→Sub-task→PR hierarchy with type-fill colours and status-ring colours per node.",

@@ -1,7 +1,7 @@
 {
-  "id": "4a2fcd7e-eb5f-448c-b6ca-41df07647f4f",
+  "id": "ef3843f7-5921-4fcb-90d5-f87a8ad5c89f",
   "schema_version": 2,
-  "timestamp": "2026-05-13T21:55:56.192Z",
+  "timestamp": "2026-05-16T20:15:46.409Z",
   "topic": "data-sync/jira-issuetype-filter",
   "decision": "Jira sync must use `issuetype NOT IN (Epic)` instead of an explicit whitelist, and include a PR-key backfill pass for tickets absent from the main sweep.",
   "key_insight": "Jira instance-specific type names silently break whitelist JQL filters — this instance uses 'Sub-task' (hyphenated) not 'Subtask' (one word). Exclusion patterns are future-proof; enumeration is fragile. A post-sync backfill pass is also required to catch Done tickets and edge-case types still referenced by open PRs.",

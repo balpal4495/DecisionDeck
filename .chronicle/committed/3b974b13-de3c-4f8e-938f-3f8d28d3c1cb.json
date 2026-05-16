@@ -1,0 +1,46 @@
+{
+  "schema_version": 2,
+  "topic": "integrations/jira-sync",
+  "decision": "Jira integration uses the Jira REST API (read-only) via POST /rest/api/3/search/jql, runs as a standalone Node.js script, and uses the Jira issue key (e.g. PROJ-123) as the external ID for idempotent upsert into the WorkItems table.",
+  "key_insight": "Jira integration uses the Jira REST API (read-only) via POST /rest/api/3/search/jql, runs as a standalone Node.js script, and uses the Jira issue key (e.g. PROJ-123) as the external ID for idempotent upsert into the WorkItems table.",
+  "affected_areas": [
+    "scripts/sync-jira.ts",
+    "lib/jira/mappers.ts",
+    "lib/env.ts",
+    "tests/sync/jira.mappers.test.ts",
+    "package.json",
+    "db/schema.ts",
+    ".env.local"
+  ],
+  "scope": [
+    "integrations",
+    "jira",
+    "work-items",
+    "phase-2",
+    "sync"
+  ],
+  "alternatives_considered": [
+    "Use gh CLI for Jira like GitHub integration",
+    "Use deprecated GET /rest/api/3/search endpoint",
+    "Jira CSV export import"
+  ],
+  "rejected_reason": [
+    "No gh CLI equivalent for Jira; direct HTTPS is cleaner with no external CLI dependency; GET /rest/api/3/search was removed by Atlassian per changelog CHANGE-2046.",
+    "CSV export requires manual steps and breaks the automated sync workflow."
+  ],
+  "status": "validated",
+  "confidence": 0.95,
+  "supersedes": [
+    "8bbabcec-7139-4bfa-961c-8011f407ff7d",
+    "88f9a0f2-c275-49dc-af79-111fe29661e3"
+  ],
+  "source_module": "evolve",
+  "evidence_cited": [
+    "8bbabcec-7139-4bfa-961c-8011f407ff7d",
+    "88f9a0f2-c275-49dc-af79-111fe29661e3"
+  ],
+  "_evolve_action": "consolidate",
+  "_evolve_reason": "Both entries concern the Jira integration sync features and describe overlapping functionality. Consolidation removes duplication and provides a more complete and concise view.",
+  "id": "3b974b13-de3c-4f8e-938f-3f8d28d3c1cb",
+  "timestamp": "2026-05-16T20:15:49.237Z"
+}
